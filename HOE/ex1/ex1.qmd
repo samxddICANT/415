@@ -1,0 +1,39 @@
+---
+title: "Exercise 1"
+---
+
+Getting Started
+
+## **Install/Launch R Packages**
+
+This exercise uses the R packages *sf* and *tidyverse*.
+
+1.  *sf* imports, manages and processes geospatial data
+
+2.  *tidyverse* wrangles and visualises said data
+
+Use p_load to install the packages into the environment:
+
+```{r}
+pacman::p_load(sf, tidyverse)
+
+```
+
+## Download and Import Data
+
+Download the following:
+
+[Pre-Schools Location Data](https://beta.data.gov.sg/datasets/d_a72bcd23e208d995f3bd4eececeaca43/view)
+
+[Master Plan 2014 Subzone Boundary Data](https://beta.data.gov.sg/datasets/d_d14da225fccf921049ab64238ff473d9/view)
+
+[LTA Cycling Path Data](https://datamall.lta.gov.sg/content/datamall/en/static-data.html)
+
+[Singapore Airbnb Listing Data](https://data.insideairbnb.com/singapore/sg/singapore/2024-06-29/data/listings.csv.gz)
+
+Inside the Ex1 folder, create a subfolder called *data*, and within that create 2 two more subfolders named *geospatial* and *aspatial* respectively.
+
+Using st_read(), import the following geospatial data into R:
+
+
+This code uses the st_read() function from sf to import the MP14_SUBZONE_WEB_PL shapefile into R as a polygon feature dataframe.

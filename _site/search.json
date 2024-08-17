@@ -1,16 +1,23 @@
 [
   {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "415",
+    "objectID": "HOE/ex1/ex1.html",
+    "href": "HOE/ex1/ex1.html",
+    "title": "Exercise 1",
     "section": "",
-    "text": "This is a Quarto website.\nTo learn more about Quarto websites visit https://quarto.org/docs/websites.\n\n1 + 1\n\n[1] 2"
+    "text": "Getting Started"
   },
   {
-    "objectID": "about.html",
-    "href": "about.html",
-    "title": "About",
-    "section": "",
-    "text": "About this site\n\n1 + 1\n\n[1] 2"
+    "objectID": "HOE/ex1/ex1.html#installlaunch-r-packages",
+    "href": "HOE/ex1/ex1.html#installlaunch-r-packages",
+    "title": "Exercise 1",
+    "section": "Install/Launch R Packages",
+    "text": "Install/Launch R Packages\nThis exercise uses the R packages sf and tidyverse.\n\nsf imports, manages and processes geospatial data\ntidyverse wrangles and visualises said data\n\nUse p_load to install the packages into the environment:\n\npacman::p_load(sf, tidyverse)"
+  },
+  {
+    "objectID": "HOE/ex1/ex1.html#download-and-import-data",
+    "href": "HOE/ex1/ex1.html#download-and-import-data",
+    "title": "Exercise 1",
+    "section": "Download and Import Data",
+    "text": "Download and Import Data\nDownload the following:\nPre-Schools Location Data\nMaster Plan 2014 Subzone Boundary Data\nLTA Cycling Path Data\nSingapore Airbnb Listing Data\nInside the Ex1 folder, create a subfolder called data, and within that create 2 two more subfolders named geospatial and aspatial respectively.\nUsing st_read(), import the following geospatial data into R:\nThis code uses the st_read() function from sf to import the MP14_SUBZONE_WEB_PL shapefile into R as a polygon feature dataframe."
   }
 ]
