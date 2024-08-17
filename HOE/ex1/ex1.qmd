@@ -29,11 +29,234 @@ Download the following:
 
 [LTA Cycling Path Data](https://datamall.lta.gov.sg/content/datamall/en/static-data.html)
 
-[Singapore Airbnb Listing Data](https://data.insideairbnb.com/singapore/sg/singapore/2024-06-29/data/listings.csv.gz)
+[Singapore Airbnb Listing Data](https://data.insideairbnb.com/singapore/sg/singapore/2024-06-29/visualisations/listings.csv)
 
 Inside the Ex1 folder, create a subfolder called *data*, and within that create 2 two more subfolders named *geospatial* and *aspatial* respectively.
 
 Using st_read(), import the following geospatial data into R:
 
+```{r}
+mpsz = st_read(dsn = "data/geospatial", layer = "MP14_SUBZONE_WEB_PL")
+```
 
-This code uses the st_read() function from sf to import the MP14_SUBZONE_WEB_PL shapefile into R as a polygon feature dataframe.
+This code uses the st_read() function from *sf* to import the MP14_SUBZONE_WEB_PL shapefile into R as a polygon feature dataframe. It shows that there are a total of **323** multipolygon features and **15** fields, in the **svy21** projected coordinates system.
+
+Next, import the CyclingPathGazette data:
+
+```{r}
+cyclingpath = st_read(dsn = "data/geospatial", layer = "CyclingPathGazette")
+```
+
+This code imports the CyclingPathGazette shapefile into R as a line feature dataframe. It reveals that there are **2558** features and **2** fields, and is similarly in the the **svy21** projected coordinates system.
+
+Lastly, import the PreSchoolsLocations data:
+
+```{r}
+preschool = st_read(dsn = "data/geospatial/PreSchoolsLocation.kml")
+```
+
+This code indicates that it is in a point feature dataframe, containing **2290** features and **2** fields. It is in the **wgs84** coordinates system, contrary to the previous two dataframes.
+
+For the aspatial data, it must first be imported into a tibble dataframe, then converted into a simple feature dataframe.
+
+```{r}
+listings <- read_csv("data/aspatial/listings.csv")
+```
+
+```{r}
+list(listings)
+```
+
+The output shows that the listings tibble dataframe contains 3450 rows and 18 columns.
+
+```{r}
+listings_sf <- st_as_sf(listings, coords = c("longitude", "latitude"), crs=4326) %>%
+  st_transform(crs=3414)
+```
+
+This code converts the listings tibble dataframe into a simple feature dataframe.
+
+-   *coords* argument requiresthe column name of the x-coordinates first then followed by the column name of the y-coordinates
+
+-   *crs* argument requiresthe coordinates system in epsg format. [EPSG: 4326](https://epsg.io/4326) is **wgs84** Geographic Coordinate System, and [EPSG: 3414](https://epsg.io/3414) is Singapore **svy21** Projected Coordinate System
+
+-   *%\>%* is used to nest *st_transform()* to transform the newly created simple feature dataframe into **svy21** projected coordinates system.
+
+## Checking Dataframe Content
+
+```{r}
+st_geometry(mpsz)
+```
+
+st_geometry() prints and displays the basic information of the feature class, such as the type of geometry, the geographic extent of the features, and the coordinate system of the data.
+
+```{r}
+glimpse(mpsz)
+```
+
+glimpse() reveals the data type of each field.
+
+```{r}
+head(mpsz, n=5)
+```
+
+head() shows the complete information of a feature object.
+
+## Plotting Geospatial Data
+
+Visualising geospatial features is important. By running the following code:
+
+```{r}
+plot(mpsz)
+```
+
+plot() shows the default plot of an sf object, a multiplot of all attributes.
+
+To plot only the geometry, run:
+
+## {r}
+
+plot(st_geometry(mpsz))
+
+To plot a specific attribute, run:
+
+```{r}
+plot(mpsz["PLN_AREA_N"])
+```
+
+## Projection
+
+\~~~sometimes i project my insecurities onto other people~~\~
+
+Map projection is an important property of a geospatial data. In order to perform geoprocessing using two geospatial data, we need to ensure that both geospatial data are projected using similar coordinate system.
+
+One issue that can occur during data importing is that the coordinate system of the source data was either missing or wrongly assigned. An example can be seen below:
+
+```{r}
+st_crs(mpsz)
+```
+
+The mpsz dataframe is projected in **svy21**, bur the print shows that EPSG is **9001**, different from the correct EPSG code of **3414**.
+
+To assign the correct EPSG code, use the following code:
+
+```{r}
+mpsz3414 <- st_set_crs(mpsz, 3414)
+```
+
+Check the CSR again:
+
+```{r}
+st_crs(mpsz3414)
+```
+
+The EPSG code is now correctly showing 3414.
+
+In geospatial analytics, it is very common to transform the original data from geographic coordinate system to projected coordinate system. This is because geographic coordinate system is not appropriate if the analysis needs to use distance or area measurements.
+
+As stated before, the preschool dataframe is in the **wgs84** coordinate system.
+
+```{r}
+st_geometry(preschool)
+```
+
+Peform projection transformation on the preschool dataframe using the code below:
+
+```{r}
+preschool3414 <- st_transform(preschool, crs = 3414)
+```
+
+```{r}
+st_geometry(preschool3414)
+```
+
+Displaying the projected dataframe shows that it is now in the **svy21** coordinate system.
+
+## Geoprocessing using *sf*
+
+The *sf* package also provides a wide range of geoprocessing functions.
+
+#### Buffering
+
+Imagine a scenario where the authorities are planning upgrades to the existing cycling network, and require the acquisition of 5m of land on both sides of the current paths.
+
+Using st_buffer(), we can compute the 5m buffer zone:
+
+```{r}
+buffer_cycling <- st_buffer(cyclingpath, dist = 5, nQuadSegs=30)
+```
+
+Next, calculate the area of the buffer:
+
+```{r}
+buffer_cycling$AREA <- st_area(buffer_cycling)
+```
+
+```{r}
+sum(buffer_cycling$AREA)
+```
+
+#### Point-in-Polygon count
+
+Imagine another scenario where the numbers of preschools in each Planning Subzone needs to be found out.
+
+```{r}
+mpsz3414$`PreSch Count`<- lengths(st_intersects(mpsz3414, preschool3414))
+```
+This code first identifies preschools located inside each Planning Subzone using st_intersects(), then uses length() to calculate the number of preschools in each Planning Subzone.
+
+
+```{r}
+summary(mpsz3414$`PreSch Count`)
+```
+
+To show the Subzone with the most preschools, run:
+```{r}
+top_n(mpsz3414, 1, `PreSch Count`)
+```
+To calculate the density of preschools within each Subzone, run:
+```{r}
+mpsz3414$Area <- mpsz3414 %>%
+  st_area()
+```
+
+```{r}
+mpsz3414 <- mpsz3414 %>%
+  mutate(`PreSch Density` = `PreSch Count`/Area * 1000000)
+```
+
+## EDA
+In practice, many geospatial analytics start with Exploratory Data Analysis. 
+
+Plot a histogram to reveal the distribution of PreSchDensity.
+```{r}
+hist(mpsz3414$`PreSch Density`)
+```
+
+This outputs a simple, but functional histogram.
+To improve the quality of the histogram, run the following:
+```{r}
+ggplot(data=mpsz3414, 
+       aes(x= as.numeric(`PreSch Density`)))+
+  geom_histogram(bins=20, 
+                 color="black", 
+                 fill="light blue") +
+  labs(title = "Are pre-schools evenly distributed in Singapore?",
+       subtitle= "There are many planning sub-zones with only a single pre-school, \non the other hand, there are two planning sub-zones with at least 20 pre-schools",
+      x = "Pre-school density (per km sq)",
+      y = "Frequency")
+```
+To plot a scatterplot showing the relationship between PreSchDensity and PreSchCount, run the following:
+```{r}
+ggplot(data=mpsz3414, 
+       aes(y = `PreSch Count`, 
+           x= as.numeric(`PreSch Density`)))+
+  geom_point(color="black", 
+             fill="light blue") +
+  xlim(0, 40) +
+  ylim(0, 40) +
+  labs(title = "",
+      x = "Pre-school density (per km sq)",
+      y = "Pre-school count")
+```
+
