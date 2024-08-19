@@ -1,0 +1,11 @@
+---
+title: "ICE 1"
+date: "August 19, 2024"
+date-modified: "last-modified"
+execute: 
+  eval: true
+  echo: true
+  freeze: true
+---
+
+

@@ -1,5 +1,11 @@
 ---
 title: "Exercise 1"
+date: "August 18, 2024"
+date-modified: "last-modified"
+execute: 
+  eval: true
+  echo: true
+  freeze: true
 ---
 
 Getting Started
@@ -203,18 +209,21 @@ Imagine another scenario where the numbers of preschools in each Planning Subzon
 ```{r}
 mpsz3414$`PreSch Count`<- lengths(st_intersects(mpsz3414, preschool3414))
 ```
-This code first identifies preschools located inside each Planning Subzone using st_intersects(), then uses length() to calculate the number of preschools in each Planning Subzone.
 
+This code first identifies preschools located inside each Planning Subzone using st_intersects(), then uses length() to calculate the number of preschools in each Planning Subzone.
 
 ```{r}
 summary(mpsz3414$`PreSch Count`)
 ```
 
 To show the Subzone with the most preschools, run:
+
 ```{r}
 top_n(mpsz3414, 1, `PreSch Count`)
 ```
+
 To calculate the density of preschools within each Subzone, run:
+
 ```{r}
 mpsz3414$Area <- mpsz3414 %>%
   st_area()
@@ -226,15 +235,17 @@ mpsz3414 <- mpsz3414 %>%
 ```
 
 ## EDA
-In practice, many geospatial analytics start with Exploratory Data Analysis. 
+
+In practice, many geospatial analytics start with Exploratory Data Analysis.
 
 Plot a histogram to reveal the distribution of PreSchDensity.
+
 ```{r}
 hist(mpsz3414$`PreSch Density`)
 ```
 
-This outputs a simple, but functional histogram.
-To improve the quality of the histogram, run the following:
+This outputs a simple, but functional histogram. To improve the quality of the histogram, run the following:
+
 ```{r}
 ggplot(data=mpsz3414, 
        aes(x= as.numeric(`PreSch Density`)))+
@@ -246,7 +257,9 @@ ggplot(data=mpsz3414,
       x = "Pre-school density (per km sq)",
       y = "Frequency")
 ```
+
 To plot a scatterplot showing the relationship between PreSchDensity and PreSchCount, run the following:
+
 ```{r}
 ggplot(data=mpsz3414, 
        aes(y = `PreSch Count`, 
@@ -259,4 +272,3 @@ ggplot(data=mpsz3414,
       x = "Pre-school density (per km sq)",
       y = "Pre-school count")
 ```
-
