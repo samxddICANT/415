@@ -195,8 +195,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#download-and-import-data" id="toc-download-and-import-data" class="nav-link active" data-scroll-target="#download-and-import-data">Download and Import Data</a></li>
+  <li><a href="#thematic-mapping-and-geovisualisation-with-r" id="toc-thematic-mapping-and-geovisualisation-with-r" class="nav-link active" data-scroll-target="#thematic-mapping-and-geovisualisation-with-r">Thematic Mapping and GeoVisualisation with R</a>
+  <ul class="collapse">
+  <li><a href="#overview" id="toc-overview" class="nav-link" data-scroll-target="#overview">Overview</a></li>
+  <li><a href="#installlaunch-r-packages" id="toc-installlaunch-r-packages" class="nav-link" data-scroll-target="#installlaunch-r-packages">Install/Launch R Packages</a></li>
+  <li><a href="#download-and-import-data" id="toc-download-and-import-data" class="nav-link" data-scroll-target="#download-and-import-data">Download and Import Data</a></li>
   <li><a href="#choropleth-mapping-geospatial-data-using-tmap" id="toc-choropleth-mapping-geospatial-data-using-tmap" class="nav-link" data-scroll-target="#choropleth-mapping-geospatial-data-using-tmap">Choropleth Mapping Geospatial Data using <em>tmap</em></a></li>
+  </ul></li>
   </ul>
 </nav>
     </div>
@@ -234,15 +239,20 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<p>Thematic Mapping and GeoVisualisation with R</p>
-<p>Overview</p>
-<p>Thematic mapping invovles the use of map symbols to visualise properties of geogrpahic features that are not naturally visible, a few examples being population, temperature, and crime rate.</p>
+<section id="thematic-mapping-and-geovisualisation-with-r" class="level1">
+<h1>Thematic Mapping and GeoVisualisation with R</h1>
+<section id="overview" class="level2">
+<h2 class="anchored" data-anchor-id="overview">Overview</h2>
+<p>Thematic mapping involves the use of map symbols to visualise properties of geographic features that are not naturally visible, a few examples being population, temperature, and crime rate.</p>
 <p>On the other hand, geovisualisation works by providing graphical ideation to render a place, phenomenon, or process visible, allowing us to utilise our vision to process information.</p>
-<p>Install/Launch R Packages**</p>
+</section>
+<section id="installlaunch-r-packages" class="level2">
+<h2 class="anchored" data-anchor-id="installlaunch-r-packages">Install/Launch R Packages</h2>
 <p>This exercise uses the R packages <em>tmap</em>, <em>sf</em> and <em>tidyverse</em>.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(sf,tmap,tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+</section>
 <section id="download-and-import-data" class="level2">
 <h2 class="anchored" data-anchor-id="download-and-import-data">Download and Import Data</h2>
 <p>Download the following:</p>
@@ -673,6 +683,7 @@ dbl (2): Pop, Time
 </div>
 
 
+</section>
 </section>
 
 </main> <!-- /main -->
