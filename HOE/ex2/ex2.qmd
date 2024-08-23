@@ -8,15 +8,15 @@ execute:
   freeze: true
 ---
 
-# Thematic Mapping and GeoVisualisation with R
+Thematic Mapping and GeoVisualisation with R
 
-**Overview**
+Overview
 
-Thematic mapping involves the use of map symbols to visualise properties of geographic features that are not naturally visible, a few examples being population, temperature, and crime rate.
+Thematic mapping invovles the use of map symbols to visualise properties of geogrpahic features that are not naturally visible, a few examples being population, temperature, and crime rate.
 
 On the other hand, geovisualisation works by providing graphical ideation to render a place, phenomenon, or process visible, allowing us to utilise our vision to process information.
 
-## Install/Launch R Packages
+Install/Launch R Packages**
 
 This exercise uses the R packages *tmap*, *sf* and *tidyverse*.
 
@@ -244,7 +244,7 @@ summary(mpsz_pop2020$DEPENDENCY)
 Using the above results as reference, we set the breakpoints at .6, .7, .8, and .9. With the addition of the min and max breakpoints, the *breaks* vector is c(0, 0.6, 0.7, 0.8, 0.9, 1).
 
 ```{r}
-tm_shape(mpsz_pop2020) + tm_fill("DEPENDENCY", breaks = c(0, 0.60, 0.70, 0.80, 0.90, 1.00)) + tm_borders(alpha = 0.5)
+tm_shape(mpsz_pop2020) + tm_fill("DEPENDENCY", breaks = c(0, 0.60, 0.70, 0.80, 0.90, 1.00, 19)) + tm_borders(alpha = 0.5)
 ```
 
 tmap supports color ramps either defined by the user, or from a prebuilt set from the RColorBrewer package.
@@ -278,7 +278,7 @@ tm_shape(mpsz_pop2020) + tm_fill("DEPENDENCY", style = "quantile", palette = "-B
 tmap also provides arguments to draw map features such as compass, scale bar, and grid lines.
 
 ```{r}
-tm_shape(mpsz_pop2020)+tm_fill("DEPENDENCY", style = "quantile", palette = "Blues", title = "No. of persons") + tm_layout(main.title = "Distribution of Dependency Ratio \nby Planning Subzone", main.title.position = "center", main.title.size = 1.2, legend.height = 0.45, legend.width = 0.35, frame = TRUE) + tm_borders(alpha = 0.5) + tm_compass(type="8star", size = 2) + tm_scale_bar(width = 0.15) + tm_grid(lwd = 0.1, alpha = 0.2) + tm_credits("Source: Planning Sub-zone boundary from Urban Redevelopment Authority (URA)\n and Population data from Department of Statistics DOS", position = c("left", "bottom"))
+tm_shape(mpsz_pop2020)+tm_fill("DEPENDENCY", style = "quantile", palette = "Blues", title = "No. of persons") + tm_layout(main.title = "Distribution of Dependency Ratio \nby Planning Subzone", main.title.position = "center", main.title.size = 1.2, legend.height = 0.45, legend.width = 0.35, frame = TRUE) + tm_borders(alpha = 0.5) + tm_compass(type="8star", size = 2) + tm_scale_bar(width = 0.15) + tm_grid(lwd = 0.1, alpha = 0.2) + tm_credits("sajdad", position = c("left", "bottom"))
 ```
 
 Reset the default style using the code below:
@@ -298,25 +298,21 @@ tmap allows facet maps to be plotted in 3 ways:
 3.  by creating multiple stand-alone maps using tmap_arrange()
 
 The code below creates facet maps by defining *ncols* in tm_fill():
-
 ```{r}
 tm_shape(mpsz_pop2020) + tm_fill(c("YOUNG", "AGED"), style = "equal", palette = "Blues") + tm_layout(legend.position = c("right", "bottom")) + tm_borders(alpha = 0.5)
 ```
 
 The code below creates facet maps by assigning multiple value to at least one of the aesthetic arguments:
-
 ```{r}
 tm_shape(mpsz_pop2020) + tm_polygons(c("DEPENDENCY", "AGED"), style = c("equal", "quantile"), palette = list("Blues", "Greens")) + tm_layout(legend.position =  c("right", "bottom"))
 ```
 
 The code below creates facet maps by using tm_facets():
-
 ```{r}
 tm_shape(mpsz_pop2020) +  tm_fill("DEPENDENCY", style = "quantile", palette =  "Blues", thres.poly = 0) + tm_facets(by="REGION_N", free.coords = TRUE, drop.units = TRUE) + tm_layout(legend.show = FALSE, title.position = c("center", "center"), title.size = 20) + tm_borders(alpha = 0.5)
 ```
 
 The code below creates facet maps by using tm_arrange():
-
 ```{r}
 youngmap <- tm_shape(mpsz_pop2020) + tm_polygons ("YOUNG", style = "quantile", palette = "Blues")
 agedmap <- tm_shape(mpsz_pop2020) + tm_polygons ("AGED", style = "quantile", palette = "Blues")
@@ -325,7 +321,7 @@ tmap_arrange(youngmap, agedmap, asp=1, ncol=2)
 ```
 
 Instead of creating a facet map, the selection function can be used to map spatial objects meeting the selection criterion.
-
 ```{r}
-tm_shape(mpsz_pop2020[mpsz_pop2020$REGION_N=="CENTRAL REGION", ]) + tm_fill("DEPENDENCY", style = "quantile", palette = "Blues", legend.hist = TRUE, legend.is.portrait = TRUE, legend.hist.z = 0.1) + tm_layout(legend.outside = FALSE, legend.height = 0.45, legend.width = 5.0, legend.position = c("right", "bottom"), frame = FALSE) + tm_borders(alpha = 0.5)
+tm_shape(mpsz_pop2020[mpsz_pop2020$REGION_N=="CENTRAL REGION", ]) + tm_fill("DEPENDENCY", style = "quantile", palette = "Blues", legend.hist = TRUE, legend.is.portrait = TRUE, legend.hist.z = 0.1) + tm_layout(legend.outside = TRUE, legend.outside.size = 0.2, legend.outside.position = c("right", "bottom"), frame = FALSE) + tm_borders(alpha = 0.5)
 ```
+
