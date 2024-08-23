@@ -8,7 +8,7 @@ execute:
   freeze: true
 ---
 
-## Install/Launch R Packages
+## **Install/Launch R Packages**
 
 This exercise uses the R packages *sf* and *tidyverse*.
 

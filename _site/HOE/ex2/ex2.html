@@ -195,8 +195,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#download-and-import-data" id="toc-download-and-import-data" class="nav-link active" data-scroll-target="#download-and-import-data">Download and Import Data</a></li>
+  <li><a href="#thematic-mapping-and-geovisualisation-with-r" id="toc-thematic-mapping-and-geovisualisation-with-r" class="nav-link active" data-scroll-target="#thematic-mapping-and-geovisualisation-with-r">Thematic Mapping and GeoVisualisation with R</a>
+  <ul class="collapse">
+  <li><a href="#installlaunch-r-packages" id="toc-installlaunch-r-packages" class="nav-link" data-scroll-target="#installlaunch-r-packages">Install/Launch R Packages</a></li>
+  <li><a href="#download-and-import-data" id="toc-download-and-import-data" class="nav-link" data-scroll-target="#download-and-import-data">Download and Import Data</a></li>
   <li><a href="#choropleth-mapping-geospatial-data-using-tmap" id="toc-choropleth-mapping-geospatial-data-using-tmap" class="nav-link" data-scroll-target="#choropleth-mapping-geospatial-data-using-tmap">Choropleth Mapping Geospatial Data using <em>tmap</em></a></li>
+  </ul></li>
   </ul>
 </nav>
     </div>
@@ -234,15 +238,18 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<p>Thematic Mapping and GeoVisualisation with R</p>
-<p>Overview</p>
-<p>Thematic mapping invovles the use of map symbols to visualise properties of geogrpahic features that are not naturally visible, a few examples being population, temperature, and crime rate.</p>
+<section id="thematic-mapping-and-geovisualisation-with-r" class="level1">
+<h1>Thematic Mapping and GeoVisualisation with R</h1>
+<p><strong>Overview</strong></p>
+<p>Thematic mapping involves the use of map symbols to visualise properties of geographic features that are not naturally visible, a few examples being population, temperature, and crime rate.</p>
 <p>On the other hand, geovisualisation works by providing graphical ideation to render a place, phenomenon, or process visible, allowing us to utilise our vision to process information.</p>
-<p>Getting Started ## <strong>Install/Launch R Packages</strong></p>
+<section id="installlaunch-r-packages" class="level2">
+<h2 class="anchored" data-anchor-id="installlaunch-r-packages">Install/Launch R Packages</h2>
 <p>This exercise uses the R packages <em>tmap</em>, <em>sf</em> and <em>tidyverse</em>.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(sf,tmap,tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+</section>
 <section id="download-and-import-data" class="level2">
 <h2 class="anchored" data-anchor-id="download-and-import-data">Download and Import Data</h2>
 <p>Download the following:</p>
@@ -590,7 +597,7 @@ dbl (2): Pop, Time
 </div>
 <p>tmap also provides arguments to draw map features such as compass, scale bar, and grid lines.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tm_shape</span>(mpsz_pop2020)<span class="sc">+</span><span class="fu">tm_fill</span>(<span class="st">"DEPENDENCY"</span>, <span class="at">style =</span> <span class="st">"quantile"</span>, <span class="at">palette =</span> <span class="st">"Blues"</span>, <span class="at">title =</span> <span class="st">"No. of persons"</span>) <span class="sc">+</span> <span class="fu">tm_layout</span>(<span class="at">main.title =</span> <span class="st">"Distribution of Dependency Ratio </span><span class="sc">\n</span><span class="st">by Planning Subzone"</span>, <span class="at">main.title.position =</span> <span class="st">"center"</span>, <span class="at">main.title.size =</span> <span class="fl">1.2</span>, <span class="at">legend.height =</span> <span class="fl">0.45</span>, <span class="at">legend.width =</span> <span class="fl">0.35</span>, <span class="at">frame =</span> <span class="cn">TRUE</span>) <span class="sc">+</span> <span class="fu">tm_borders</span>(<span class="at">alpha =</span> <span class="fl">0.5</span>) <span class="sc">+</span> <span class="fu">tm_compass</span>(<span class="at">type=</span><span class="st">"8star"</span>, <span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span> <span class="fu">tm_scale_bar</span>(<span class="at">width =</span> <span class="fl">0.15</span>) <span class="sc">+</span> <span class="fu">tm_grid</span>(<span class="at">lwd =</span> <span class="fl">0.1</span>, <span class="at">alpha =</span> <span class="fl">0.2</span>) <span class="sc">+</span> <span class="fu">tm_credits</span>(<span class="st">"sajdad"</span>, <span class="at">position =</span> <span class="fu">c</span>(<span class="st">"left"</span>, <span class="st">"bottom"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tm_shape</span>(mpsz_pop2020)<span class="sc">+</span><span class="fu">tm_fill</span>(<span class="st">"DEPENDENCY"</span>, <span class="at">style =</span> <span class="st">"quantile"</span>, <span class="at">palette =</span> <span class="st">"Blues"</span>, <span class="at">title =</span> <span class="st">"No. of persons"</span>) <span class="sc">+</span> <span class="fu">tm_layout</span>(<span class="at">main.title =</span> <span class="st">"Distribution of Dependency Ratio </span><span class="sc">\n</span><span class="st">by Planning Subzone"</span>, <span class="at">main.title.position =</span> <span class="st">"center"</span>, <span class="at">main.title.size =</span> <span class="fl">1.2</span>, <span class="at">legend.height =</span> <span class="fl">0.45</span>, <span class="at">legend.width =</span> <span class="fl">0.35</span>, <span class="at">frame =</span> <span class="cn">TRUE</span>) <span class="sc">+</span> <span class="fu">tm_borders</span>(<span class="at">alpha =</span> <span class="fl">0.5</span>) <span class="sc">+</span> <span class="fu">tm_compass</span>(<span class="at">type=</span><span class="st">"8star"</span>, <span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span> <span class="fu">tm_scale_bar</span>(<span class="at">width =</span> <span class="fl">0.15</span>) <span class="sc">+</span> <span class="fu">tm_grid</span>(<span class="at">lwd =</span> <span class="fl">0.1</span>, <span class="at">alpha =</span> <span class="fl">0.2</span>) <span class="sc">+</span> <span class="fu">tm_credits</span>(<span class="st">"Source: Planning Sub-zone boundary from Urban Redevelopment Authority (URA)</span><span class="sc">\n</span><span class="st"> and Population data from Department of Statistics DOS"</span>, <span class="at">position =</span> <span class="fu">c</span>(<span class="st">"left"</span>, <span class="st">"bottom"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -618,13 +625,7 @@ dbl (2): Pop, Time
 </ol>
 <p>The code below creates facet maps by defining <em>ncols</em> in tm_fill():</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tm_shape</span>(mpsz_pop2020) <span class="sc">+</span> <span class="fu">tm_fill</span>(<span class="fu">c</span>(<span class="st">"YOUNG"</span>, <span class="st">"AGED"</span>), <span class="at">style =</span> <span class="st">"equal"</span>, <span class="at">palette =</span> <span class="st">"Blues"</span>) <span class="sc">+</span> <span class="fu">tm_layout</span>(<span class="at">legend.position =</span> <span class="fu">c</span>(<span class="st">"right"</span>, <span class="st">"bottom"</span>)) <span class="sc">+</span> <span class="fu">tm_borders</span>(<span class="at">alpha =</span> <span class="fl">0.5</span>) <span class="sc">+</span> <span class="fu">tmap_style</span>(<span class="st">"white"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>tmap style set to "white"</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>other available styles are: "gray", "natural", "cobalt", "col_blind", "albatross", "beaver", "bw", "classic", "watercolor" </code></pre>
-</div>
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tm_shape</span>(mpsz_pop2020) <span class="sc">+</span> <span class="fu">tm_fill</span>(<span class="fu">c</span>(<span class="st">"YOUNG"</span>, <span class="st">"AGED"</span>), <span class="at">style =</span> <span class="st">"equal"</span>, <span class="at">palette =</span> <span class="st">"Blues"</span>) <span class="sc">+</span> <span class="fu">tm_layout</span>(<span class="at">legend.position =</span> <span class="fu">c</span>(<span class="st">"right"</span>, <span class="st">"bottom"</span>)) <span class="sc">+</span> <span class="fu">tm_borders</span>(<span class="at">alpha =</span> <span class="fl">0.5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -635,7 +636,7 @@ dbl (2): Pop, Time
 </div>
 <p>The code below creates facet maps by assigning multiple value to at least one of the aesthetic arguments:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tm_shape</span>(mpsz_pop2020) <span class="sc">+</span> <span class="fu">tm_polygons</span>(<span class="fu">c</span>(<span class="st">"DEPENDENCY"</span>, <span class="st">"AGED"</span>), <span class="at">style =</span> <span class="fu">c</span>(<span class="st">"equal"</span>, <span class="st">"quantile"</span>), <span class="at">palette =</span> <span class="fu">list</span>(<span class="st">"Blues"</span>, <span class="st">"Greens"</span>)) <span class="sc">+</span> <span class="fu">tm_layout</span>(<span class="at">legend.position =</span>  <span class="fu">c</span>(<span class="st">"right"</span>, <span class="st">"bottom"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tm_shape</span>(mpsz_pop2020) <span class="sc">+</span> <span class="fu">tm_polygons</span>(<span class="fu">c</span>(<span class="st">"DEPENDENCY"</span>, <span class="st">"AGED"</span>), <span class="at">style =</span> <span class="fu">c</span>(<span class="st">"equal"</span>, <span class="st">"quantile"</span>), <span class="at">palette =</span> <span class="fu">list</span>(<span class="st">"Blues"</span>, <span class="st">"Greens"</span>)) <span class="sc">+</span> <span class="fu">tm_layout</span>(<span class="at">legend.position =</span>  <span class="fu">c</span>(<span class="st">"right"</span>, <span class="st">"bottom"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -646,7 +647,7 @@ dbl (2): Pop, Time
 </div>
 <p>The code below creates facet maps by using tm_facets():</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tm_shape</span>(mpsz_pop2020) <span class="sc">+</span>  <span class="fu">tm_fill</span>(<span class="st">"DEPENDENCY"</span>, <span class="at">style =</span> <span class="st">"quantile"</span>, <span class="at">palette =</span>  <span class="st">"Blues"</span>, <span class="at">thres.poly =</span> <span class="dv">0</span>) <span class="sc">+</span> <span class="fu">tm_facets</span>(<span class="at">by=</span><span class="st">"REGION_N"</span>, <span class="at">free.coords =</span> <span class="cn">TRUE</span>, <span class="at">drop.units =</span> <span class="cn">TRUE</span>) <span class="sc">+</span> <span class="fu">tm_layout</span>(<span class="at">legend.show =</span> <span class="cn">FALSE</span>, <span class="at">title.position =</span> <span class="fu">c</span>(<span class="st">"center"</span>, <span class="st">"center"</span>), <span class="at">title.size =</span> <span class="dv">20</span>) <span class="sc">+</span> <span class="fu">tm_borders</span>(<span class="at">alpha =</span> <span class="fl">0.5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tm_shape</span>(mpsz_pop2020) <span class="sc">+</span>  <span class="fu">tm_fill</span>(<span class="st">"DEPENDENCY"</span>, <span class="at">style =</span> <span class="st">"quantile"</span>, <span class="at">palette =</span>  <span class="st">"Blues"</span>, <span class="at">thres.poly =</span> <span class="dv">0</span>) <span class="sc">+</span> <span class="fu">tm_facets</span>(<span class="at">by=</span><span class="st">"REGION_N"</span>, <span class="at">free.coords =</span> <span class="cn">TRUE</span>, <span class="at">drop.units =</span> <span class="cn">TRUE</span>) <span class="sc">+</span> <span class="fu">tm_layout</span>(<span class="at">legend.show =</span> <span class="cn">FALSE</span>, <span class="at">title.position =</span> <span class="fu">c</span>(<span class="st">"center"</span>, <span class="st">"center"</span>), <span class="at">title.size =</span> <span class="dv">20</span>) <span class="sc">+</span> <span class="fu">tm_borders</span>(<span class="at">alpha =</span> <span class="fl">0.5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -657,10 +658,10 @@ dbl (2): Pop, Time
 </div>
 <p>The code below creates facet maps by using tm_arrange():</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>youngmap <span class="ot">&lt;-</span> <span class="fu">tm_shape</span>(mpsz_pop2020) <span class="sc">+</span> <span class="fu">tm_polygons</span> (<span class="st">"YOUNG"</span>, <span class="at">style =</span> <span class="st">"quantile"</span>, <span class="at">palette =</span> <span class="st">"Blues"</span>)</span>
-<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>agedmap <span class="ot">&lt;-</span> <span class="fu">tm_shape</span>(mpsz_pop2020) <span class="sc">+</span> <span class="fu">tm_polygons</span> (<span class="st">"AGED"</span>, <span class="at">style =</span> <span class="st">"quantile"</span>, <span class="at">palette =</span> <span class="st">"Blues"</span>)</span>
-<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a><span class="fu">tmap_arrange</span>(youngmap, agedmap, <span class="at">asp=</span><span class="dv">1</span>, <span class="at">ncol=</span><span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>youngmap <span class="ot">&lt;-</span> <span class="fu">tm_shape</span>(mpsz_pop2020) <span class="sc">+</span> <span class="fu">tm_polygons</span> (<span class="st">"YOUNG"</span>, <span class="at">style =</span> <span class="st">"quantile"</span>, <span class="at">palette =</span> <span class="st">"Blues"</span>)</span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>agedmap <span class="ot">&lt;-</span> <span class="fu">tm_shape</span>(mpsz_pop2020) <span class="sc">+</span> <span class="fu">tm_polygons</span> (<span class="st">"AGED"</span>, <span class="at">style =</span> <span class="st">"quantile"</span>, <span class="at">palette =</span> <span class="st">"Blues"</span>)</span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a><span class="fu">tmap_arrange</span>(youngmap, agedmap, <span class="at">asp=</span><span class="dv">1</span>, <span class="at">ncol=</span><span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -671,7 +672,7 @@ dbl (2): Pop, Time
 </div>
 <p>Instead of creating a facet map, the selection function can be used to map spatial objects meeting the selection criterion.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tm_shape</span>(mpsz_pop2020[mpsz_pop2020<span class="sc">$</span>REGION_N<span class="sc">==</span><span class="st">"CENTRAL REGION"</span>, ]) <span class="sc">+</span> <span class="fu">tm_fill</span>(<span class="st">"DEPENDENCY"</span>, <span class="at">style =</span> <span class="st">"quantile"</span>, <span class="at">palette =</span> <span class="st">"Blues"</span>, <span class="at">legend.hist =</span> <span class="cn">TRUE</span>, <span class="at">legend.is.portrait =</span> <span class="cn">TRUE</span>, <span class="at">legend.hist.z =</span> <span class="fl">0.1</span>) <span class="sc">+</span> <span class="fu">tm_layout</span>(<span class="at">legend.outside =</span> <span class="cn">FALSE</span>, <span class="at">legend.height =</span> <span class="fl">0.45</span>, <span class="at">legend.width =</span> <span class="fl">5.0</span>, <span class="at">legend.position =</span> <span class="fu">c</span>(<span class="st">"right"</span>, <span class="st">"bottom"</span>), <span class="at">frame =</span> <span class="cn">FALSE</span>) <span class="sc">+</span> <span class="fu">tm_borders</span>(<span class="at">alpha =</span> <span class="fl">0.5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tm_shape</span>(mpsz_pop2020[mpsz_pop2020<span class="sc">$</span>REGION_N<span class="sc">==</span><span class="st">"CENTRAL REGION"</span>, ]) <span class="sc">+</span> <span class="fu">tm_fill</span>(<span class="st">"DEPENDENCY"</span>, <span class="at">style =</span> <span class="st">"quantile"</span>, <span class="at">palette =</span> <span class="st">"Blues"</span>, <span class="at">legend.hist =</span> <span class="cn">TRUE</span>, <span class="at">legend.is.portrait =</span> <span class="cn">TRUE</span>, <span class="at">legend.hist.z =</span> <span class="fl">0.1</span>) <span class="sc">+</span> <span class="fu">tm_layout</span>(<span class="at">legend.outside =</span> <span class="cn">FALSE</span>, <span class="at">legend.height =</span> <span class="fl">0.45</span>, <span class="at">legend.width =</span> <span class="fl">5.0</span>, <span class="at">legend.position =</span> <span class="fu">c</span>(<span class="st">"right"</span>, <span class="st">"bottom"</span>), <span class="at">frame =</span> <span class="cn">FALSE</span>) <span class="sc">+</span> <span class="fu">tm_borders</span>(<span class="at">alpha =</span> <span class="fl">0.5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -682,6 +683,7 @@ dbl (2): Pop, Time
 </div>
 
 
+</section>
 </section>
 
 </main> <!-- /main -->
