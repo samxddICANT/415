@@ -28,6 +28,16 @@ website:
         menu:
           - text: "ice1"
             href: "ICE/ex1/ice1.html"
+          - text: "ice2"
+            href: "ICE/ex2/ice2.html"
+          - text: "ice3"
+            href: "ICE/ex3/ice3.html"
+          - text: "ice4"
+            href: "ICE/ex4/ice4.html"
+          - text: "ice5"
+            href: "ICE/ex5/ice5.html"
+          - text: "ice6"
+            href: "ICE/ex6/ice6.html"
     right: 
       - href: index.qmd
         text: Home
