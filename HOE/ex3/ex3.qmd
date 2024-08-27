@@ -80,9 +80,7 @@ Create an alternative interactive pin map using the code below:
 tmap_mode('plot')
 ```
 
-Geospatial Data Wrangling
-
-Convert sf dataframes to sp's Spatial\* class
+**Geospatial Data Wrangling**
 
 The code below uses as_Spatial() from the *sf* package to convert the three geospatial data from a simple dataframe to sp's Spatial\* class.
 
@@ -106,7 +104,7 @@ mpsz
 sg
 ```
 
-Convert Spatial\* into generic sp format
+Convert Spatial\* into generic sp format:
 
 ```{r}
 childcare_sp <- as(childcare, "SpatialPoints")
@@ -123,16 +121,14 @@ childcare_sp
 sg_sp
 ```
 
-Convert sp format into spatstat's ppp format
+Convert sp format into spatstat's ppp format:
 
 ```{r}
-#win <- as.owin(childcare_sp)
 childcare_ppp1 <- as(childcare_sp, "ppp")
 childcare_ppp1
-#cant get this to work, look later
 ```
 
-alternatively use the below to convert from sf into ppp format
+Alternatively, convert from sf into ppp format:
 
 ```{r}
 childcare_ppp <- as.ppp(st_coordinates(childcare_sf), st_bbox(childcare_sf))
@@ -185,14 +181,14 @@ The code below plots out the locations of the duplicate point events:
 #tmap_mode('plot')
 ```
 
-To tackle this problem, use jittering to slightly shift the duplicate points such that they no longer occur at the same point, to make them unique.
+To tackle this problem, use *jittering* to slightly shift the duplicate points such that they no longer occur at the same point, to make them unique.
 
 ```{r}
 childcare_ppp <- rjitter(childcare_ppp, retry = TRUE, nsimm = 1, drop = TRUE)
 any(duplicated(childcare_ppp))
 ```
 
-When analysing spatial point patterns, owin can be used to define a geographic boundary to confine our analysis
+When analysing spatial point patterns, owin can be used to define a geographic boundary to confine our analysis:
 
 ```{r}
 sg_owin <- as.owin(sg_sf)
@@ -218,7 +214,7 @@ plot(childcareSG_ppp)
 
 ## 1st Order Spatial Point Pattern Analysis
 
-The density() function from spatstat computes a kernal density for a given set of point events. The diggle argument can be used to automatically select a bandwidth for computing the kernel density.
+The density() function from spatstat computes a kernal density for a given set of point events. The **diggle** argument can be used to automatically select a bandwidth for computing the kernel density.
 
 ```{r}
 kde_childcareSG_bw <- density(childcareSG_ppp, sigma = bw.diggle, edge = TRUE, kernel = "gaussian")
@@ -242,7 +238,9 @@ plot(kde_childcareSG_bw)
 
 The resultant plot is much more legible.
 
-Multiple bandwidth calculation methods are available from *spatstat*, some of which are covered below: Cronie and van Lieshout
+Multiple bandwidth calculation methods are available from *spatstat*, some of which are covered below:
+
+**Cronie and van Lieshout**
 
 ```{r}
 bw.CvL(childcareSG_ppp_km)
@@ -252,7 +250,7 @@ bw.CvL(childcareSG_ppp_km)
 kde_childcareSG_bw_CvL <- density(childcareSG_ppp_km, sigma =  bw.CvL, edge = TRUE, kernel = "gaussian")
 ```
 
-Scott's Rule
+**Scott's Rule**
 
 ```{r}
 bw.scott(childcareSG_ppp_km)
@@ -262,7 +260,7 @@ bw.scott(childcareSG_ppp_km)
 kde_childcareSG_bw_scott <- density(childcareSG_ppp_km, sigma =  bw.scott, edge = TRUE, kernel = "gaussian")
 ```
 
-Likelihood Cross Validation
+**Likelihood Cross Validation**
 
 ```{r}
 bw.ppl(childcareSG_ppp_km)
@@ -272,7 +270,7 @@ bw.ppl(childcareSG_ppp_km)
 kde_childcareSG_bw_ppl <- density(childcareSG_ppp_km, sigma =  bw.ppl, edge = TRUE, kernel = "gaussian")
 ```
 
-The plot below compares the above 3 methods with diggle
+The plot below compares the above 3 methods with **diggle**:
 
 ```{r}
 par(mfrow=c(2,2))
@@ -283,7 +281,7 @@ plot(kde_childcareSG_bw_scott, main = "bw.scott")
 plot(kde_childcareSG_bw_ppl, main = "bw.ppl")
 ```
 
-Different smoothing methods are also available.
+Different smoothing methods are also available:
 
 ```{r}
 par(mfrow = c(2,2))
@@ -294,7 +292,9 @@ plot(density(childcareSG_ppp_km, sigma = bw.ppl, edge = TRUE, kernel = "quartic"
 plot(density(childcareSG_ppp_km, sigma = bw.ppl, edge = TRUE, kernel = "disc"), main = "Disc")
 ```
 
-Fixed Bandwidth In the code below, sigma is assigned a value of 0.6, whcih represents 0.6km.
+Fixed Bandwidth
+
+In the code below, sigma is assigned a value of 0.6, which represents 0.6km.
 
 ```{r}
 kde_childcareSG_600 <- density(childcareSG_ppp_km, sigma = 0.6, edge = TRUE, kernel = "gaussian")
@@ -346,7 +346,7 @@ tm_shape(kde_childcareSG_bw_raster) +
   tm_layout(legend.position = c("right", "bottom"), frame = FALSE)
 ```
 
-THe code below extracts the targeted planning areas:
+The code below extracts the targeted planning areas:
 
 ```{r}
 pg <- mpsz_sf %>% filter(PLN_AREA_N == "PUNGGOL")
@@ -401,7 +401,7 @@ childcare_jw_ppp = childcare_ppp[jw_owin]
 
 ```
 
-Rescale from m to km:
+Rescale from ***m*** to ***km***:
 
 ```{r}
 childcare_pg_ppp.km = rescale(childcare_pg_ppp, 1000, "km")
@@ -421,7 +421,7 @@ plot(childcare_ck_ppp.km, main="Choa Chu Kang")
 plot(childcare_jw_ppp.km, main="Jurong West")
 ```
 
-Compute the KDE, using *diggle* to derive the bandwidth:
+Compute the KDE, using **diggle** to derive the bandwidth:
 
 ```{r}
 par(mfrow = c(2,2))
@@ -448,7 +448,7 @@ plot(density(childcare_jw_ppp.km,
      main="Jurong West")
 ```
 
-Compute the KDE using a fixed bandwidth of 0.25km:
+Compute the KDE, using a fixed bandwidth of 0.25km:
 
 ```{r}
 par(mfrow=c(2,2))
@@ -525,8 +525,8 @@ As p \< 0.05, H0 can be rejected.
 
 ## 2nd Order Spatial Point Pattern Analysis
 
-The **G function** measures the distribution of the distances from an arbitrary even to its nearest event.
-G function on the Choa Chu Kang area:
+The **G function** measures the distribution of the distances from an arbitrary even to its nearest event. G function on the Choa Chu Kang area:
+
 ```{r}
 G_CK = Gest(childcare_ck_ppp, correction = "border")
 plot(G_CK, xlim=c(0,500))
@@ -567,10 +567,12 @@ plot(G_tm.csr)
 The **F function** estimates the empty space function F(r) or its hazard rate h(r) from a point pattern in a window of arbitrary shape.
 
 F function on the Choa Chu Kang area:
+
 ```{r}
 F_CK = Fest(childcare_ck_ppp)
 plot(F_CK)
 ```
+
 Perform a complete Spatial Randomness Test with the following hypotheses:
 
 -   H0: Random distribution of childcare centres in Choa Chu Kang
@@ -578,6 +580,7 @@ Perform a complete Spatial Randomness Test with the following hypotheses:
 -   H1: Non-Random distribution of childcare centres in Choa Chu Kang
 
 Reject H0 if p \< 0.001.
+
 ```{r}
 F_CK.csr <- envelope(childcare_ck_ppp, Fest, nsim = 999)
 ```
@@ -587,10 +590,12 @@ plot(F_CK.csr)
 ```
 
 F function on the Tampines area:
+
 ```{r}
 F_tm = Fest(childcare_tm_ppp, correction = "best")
 plot(F_tm)
 ```
+
 Perform a complete Spatial Randomness Test with the following hypotheses:
 
 -   H0: Random distribution of childcare centres in Tampines
@@ -603,7 +608,6 @@ Reject H0 if p \< 0.001.
 F_tm.csr <- envelope(childcare_tm_ppp, Fest, correction = "all", nsim = 999)
 ```
 
-
 ```{r}
 plot(F_tm.csr)
 ```
@@ -611,10 +615,12 @@ plot(F_tm.csr)
 The **K function** measures the number of events found up to a given distance of any particular event.
 
 K function on the Choa Chu Kang area:
+
 ```{r}
 K_ck = Kest(childcare_ck_ppp, correction = "Ripley")
 plot(K_ck, . -r ~ r, ylab= "K(d)-r", xlab = "d(m)")
 ```
+
 Perform a complete Spatial Randomness Test with the following hypotheses:
 
 -   H0: Random distribution of childcare centres in Choa Chu Kang
@@ -627,18 +633,19 @@ Reject H0 if p \< 0.001.
 K_ck.csr <- envelope(childcare_ck_ppp, Kest, nsim = 99, rank = 1, glocal=TRUE)
 ```
 
-
 ```{r}
 plot(K_ck.csr, . - r ~ r, xlab="d", ylab="K(d)-r")
 ```
 
 K function on the Tampines area:
+
 ```{r}
 K_tm = Kest(childcare_tm_ppp, correction = "Ripley")
 plot(K_tm, . -r ~ r, 
      ylab= "K(d)-r", xlab = "d(m)", 
      xlim=c(0,1000))
 ```
+
 Perform a complete Spatial Randomness Test with the following hypotheses:
 
 -   H0: Random distribution of childcare centres in Tampines
@@ -647,26 +654,25 @@ Perform a complete Spatial Randomness Test with the following hypotheses:
 
 Reject H0 if p \< 0.001.
 
-
 ```{r}
 K_tm.csr <- envelope(childcare_tm_ppp, Kest, nsim = 99, rank = 1, glocal=TRUE)
 ```
-
 
 ```{r}
 plot(K_tm.csr, . - r ~ r, 
      xlab="d", ylab="K(d)-r", xlim=c(0,500))
 ```
 
-
 The **L function** is a transformation of the K function, designed to help in identifying clustering or regularity in spatial point patterns.
 
 L function on the Choa Chu Kang area:
+
 ```{r}
 L_ck = Lest(childcare_ck_ppp, correction = "Ripley")
 plot(L_ck, . -r ~ r, 
      ylab= "L(d)-r", xlab = "d(m)")
 ```
+
 Perform a complete Spatial Randomness Test with the following hypotheses:
 
 -   H0: Random distribution of childcare centres in Choa Chu Kang
@@ -679,18 +685,19 @@ Reject H0 if p \< 0.001.
 L_ck.csr <- envelope(childcare_ck_ppp, Lest, nsim = 99, rank = 1, glocal=TRUE)
 ```
 
-
 ```{r}
 plot(L_ck.csr, . - r ~ r, xlab="d", ylab="L(d)-r")
 ```
 
 L function on the Tampines area:
+
 ```{r}
 L_tm = Lest(childcare_tm_ppp, correction = "Ripley")
 plot(L_tm, . -r ~ r, 
      ylab= "L(d)-r", xlab = "d(m)", 
      xlim=c(0,1000))
 ```
+
 Perform a complete Spatial Randomness Test with the following hypotheses:
 
 -   H0: Random distribution of childcare centres in Tampines
@@ -699,25 +706,11 @@ Perform a complete Spatial Randomness Test with the following hypotheses:
 
 Reject H0 if p \< 0.001.
 
-
 ```{r}
 L_tm.csr <- envelope(childcare_tm_ppp, Lest, nsim = 99, rank = 1, glocal=TRUE)
 ```
 
-
 ```{r}
 plot(L_tm.csr, . - r ~ r, 
      xlab="d", ylab="L(d)-r", xlim=c(0,500))
-```
-
-```{r}
-
-```
-
-```{r}
-
-```
-
-```{r}
-
 ```

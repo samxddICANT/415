@@ -1,7 +1,17 @@
 ---
 title: "415"
+listing:
+  id: exercises
+  contents: 
+    - "HOE/*/*.qmd"
+  type: default
 ---
 
-**eyesfouronefive**
+# eyesfouronefive
 
 geospatial analytics and applications
+
+**Hands On Exercises**
+
+::: {#exercises}
+:::
