@@ -1,0 +1,9 @@
+---
+title: "Ex4"
+date: "September 3, 2024"
+date-modified: "last-modified"
+execute: 
+  eval: true
+  echo: true
+  freeze: true
+---

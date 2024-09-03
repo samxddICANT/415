@@ -1,0 +1,46 @@
+---
+title: "ICE 3"
+date: "September 2, 2024"
+date-modified: "last-modified"
+execute: 
+  eval: true
+  echo: true
+  freeze: true
+---
+## Install/Launch R 
+
+```{r}
+# eval: false
+install.packages("maptools", repos = "https://packagemanager.posit.co/cran/2023-10-13")
+```
+
+
+
+```{r}
+pacman::p_load(sf, raster, spatstat, tmap, tidyverse, sp)
+```
+
+
+
+```{r}
+acled_sf <- st_read("data/ACLED_Myanmar.csv") %>%
+  st_as_sf(coords = c(
+    "longitude", "latitude"),
+    crs=4326) %>%
+  st_transform(crs = 32647) %>%
+  mutate(event_date = dmy(event_date))
+```
+
+
+
+```{r}
+
+tmap_mode("plot")
+acled_sf %>%
+  filter(year == 2023 | 
+           event_type == "Political violence") %>%
+  tm_shape()+
+  tm_dots()
+```
+
+
