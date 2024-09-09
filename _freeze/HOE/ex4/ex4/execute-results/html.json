@@ -1,0 +1,15 @@
+{
+  "hash": "7f37475442f6b8d09f69e465c87c0aa1",
+  "result": {
+    "engine": "knitr",
+    "markdown": "---\ntitle: \"Ex4\"\ndate: \"September 3, 2024\"\ndate-modified: \"last-modified\"\nexecute: \n  eval: true\n  echo: true\n  freeze: true\n---\n\n\n# Network Constrained Spatial Point Pattern Analysis\n\nNetwork Constrained Spatial Point Patterns Analysis (NetSPAA) is a set of methods specifically designed for analyzing spatial point events that occur on or alongside networks. These events could include the locations of traffic accidents, childcare centers, or other spatial occurrences, while the networks themselves could be road systems, river networks, or similar structures.\n\nThis exercise uses spNetwork functions to derive network kernel density estimation (NKDE), and perform network G-function and K-function analysis.\n\n## Install/Launch R Packages\n\nThis exercises uses the R packages *sf* , *tmap*, *spNetwork*, and *tidyverse*.\n\n\n::: {.cell}\n\n```{.r .cell-code}\n#pacman::p_load(sf, tmap, spNetwork, tidyverse)\n```\n:::\n\n\n## Download and Import Data\n\nDownload the following:\n\nPunggol_St\n\nPunggol_CC\n\nUsing st_read(), import the following geospatial data into R:\n\n\n::: {.cell}\n\n```{.r .cell-code}\n#network <- st_read(dsn = \"data\", layer = \"Punggol_St\")\n```\n:::\n\n::: {.cell}\n\n```{.r .cell-code}\n#childcare <- st_read(dsn = \"data\", layer = \"Punggol_CC\")\n```\n:::\n\n\nVisualise the data using the code below:\n\n\n::: {.cell}\n\n```{.r .cell-code}\n#plot(st_geometry(network))\n#plot(childcare, add = T, col = 'red', pch = 19)\n```\n:::\n\n::: {.cell}\n\n```{.r .cell-code}\n#tmap_mode('view')\n#tmap_shape(childcare) +\n#  tm_dots() +\n#  tm_shape(network) +\n#  tm_lines()\n```\n:::\n\n::: {.cell}\n\n```{.r .cell-code}\n#tmap_mode('plot')\n```\n:::\n\n\n## NKDE Analysis\n\nBefore computing NKDE, the SpatialLines object needs to be cut into lixels according to a chosen resolution, using lixelize_lines().\n\n\n::: {.cell}\n\n```{.r .cell-code}\n#lixels <- lixelize_lines(network, 700, mindist = 375)\n```\n:::\n\n\n-   lixel length set to 700m,\n-   minimum lixel length set to 350m\n\nAfter splitting into lixels, if the length of a lixel is less than mindist, it is then added to the previous lixel. THe default mindist is 1/10th of the maxdist.\n\nNext, lines_center() is used to generate a SpatialPointsDataFrame with line centre points:\n\n\n::: {.cell}\n\n```{.r .cell-code}\n#samples <- lines_center(lixels)\n```\n:::\n\n\nUse the code below to compute NKDE:\n\n::: {.cell}\n\n:::\n",
+    "supporting": [],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}

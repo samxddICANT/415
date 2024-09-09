@@ -8,5 +8,78 @@ execute:
   freeze: true
 ---
 
+# Network Constrained Spatial Point Pattern Analysis
 
-something or other
+Network Constrained Spatial Point Patterns Analysis (NetSPAA) is a set of methods specifically designed for analyzing spatial point events that occur on or alongside networks. These events could include the locations of traffic accidents, childcare centers, or other spatial occurrences, while the networks themselves could be road systems, river networks, or similar structures.
+
+This exercise uses spNetwork functions to derive network kernel density estimation (NKDE), and perform network G-function and K-function analysis.
+
+## Install/Launch R Packages
+
+This exercises uses the R packages *sf* , *tmap*, *spNetwork*, and *tidyverse*.
+
+```{r}
+#pacman::p_load(sf, tmap, spNetwork, tidyverse)
+```
+
+## Download and Import Data
+
+Download the following:
+
+Punggol_St
+
+Punggol_CC
+
+Using st_read(), import the following geospatial data into R:
+
+```{r}
+#network <- st_read(dsn = "data", layer = "Punggol_St")
+```
+
+```{r}
+#childcare <- st_read(dsn = "data", layer = "Punggol_CC")
+```
+
+Visualise the data using the code below:
+
+```{r}
+#plot(st_geometry(network))
+#plot(childcare, add = T, col = 'red', pch = 19)
+```
+
+```{r}
+#tmap_mode('view')
+#tmap_shape(childcare) +
+#  tm_dots() +
+#  tm_shape(network) +
+#  tm_lines()
+```
+
+```{r}
+#tmap_mode('plot')
+```
+
+## NKDE Analysis
+
+Before computing NKDE, the SpatialLines object needs to be cut into lixels according to a chosen resolution, using lixelize_lines().
+
+```{r}
+#lixels <- lixelize_lines(network, 700, mindist = 375)
+```
+
+-   lixel length set to 700m,
+-   minimum lixel length set to 350m
+
+After splitting into lixels, if the length of a lixel is less than mindist, it is then added to the previous lixel. THe default mindist is 1/10th of the maxdist.
+
+Next, lines_center() is used to generate a SpatialPointsDataFrame with line centre points:
+
+```{r}
+#samples <- lines_center(lixels)
+```
+
+Use the code below to compute NKDE:
+```{r}
+
+```
+

@@ -4,7 +4,7 @@
     "href": "index.html",
     "title": "415",
     "section": "",
-    "text": "eyesfouronefive\ngeospatial analytics and applications\nHands On Exercises\n\n\n\n\n\n\n\n\n\n\nEx4\n\n\n\n\n\n\n\n\n\n\n\nSep 3, 2024\n\n\n\n\n\n\n\n\n\n\n\n\nExercise 1\n\n\n\n\n\n\n\n\n\n\n\nAug 18, 2024\n\n\n\n\n\n\n\n\n\n\n\n\nExercise 2\n\n\n\n\n\n\n\n\n\n\n\nAug 22, 2024\n\n\n\n\n\n\n\n\n\n\n\n\nExercise 3\n\n\n\n\n\n\n\n\n\n\n\nAug 27, 2024\n\n\n\n\n\n\nNo matching items"
+    "text": "eyesfouronefive\ngeospatial analytics and applications\nHands On Exercises\n\n\n\n\n\n\n\n\n\n\nEx4\n\n\n\n\n\n\n\n\n\n\n\nSep 3, 2024\n\n\n\n\n\n\n\n\n\n\n\n\nExercise 1\n\n\n\n\n\n\n\n\n\n\n\nAug 18, 2024\n\n\n\n\n\n\n\n\n\n\n\n\nExercise 2\n\n\n\n\n\n\n\n\n\n\n\nAug 22, 2024\n\n\n\n\n\n\n\n\n\n\n\n\nExercise 3\n\n\n\n\n\n\n\n\n\n\n\nAug 27, 2024\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nNo matching items"
   },
   {
     "objectID": "ICE/ex3/ice3.html",
@@ -165,7 +165,7 @@
     "href": "HOE/ex4/ex4.html",
     "title": "Ex4",
     "section": "",
-    "text": "something or other"
+    "text": "Network Constrained Spatial Point Patterns Analysis (NetSPAA) is a set of methods specifically designed for analyzing spatial point events that occur on or alongside networks. These events could include the locations of traffic accidents, childcare centers, or other spatial occurrences, while the networks themselves could be road systems, river networks, or similar structures.\nThis exercise uses spNetwork functions to derive network kernel density estimation (NKDE), and perform network G-function and K-function analysis.\n\n\nThis exercises uses the R packages sf , tmap, spNetwork, and tidyverse.\n\n#pacman::p_load(sf, tmap, spNetwork, tidyverse)\n\n\n\n\nDownload the following:\nPunggol_St\nPunggol_CC\nUsing st_read(), import the following geospatial data into R:\n\n#network &lt;- st_read(dsn = \"data\", layer = \"Punggol_St\")\n\n\n#childcare &lt;- st_read(dsn = \"data\", layer = \"Punggol_CC\")\n\nVisualise the data using the code below:\n\n#plot(st_geometry(network))\n#plot(childcare, add = T, col = 'red', pch = 19)\n\n\n#tmap_mode('view')\n#tmap_shape(childcare) +\n#  tm_dots() +\n#  tm_shape(network) +\n#  tm_lines()\n\n\n#tmap_mode('plot')\n\n\n\n\nBefore computing NKDE, the SpatialLines object needs to be cut into lixels according to a chosen resolution, using lixelize_lines().\n\n#lixels &lt;- lixelize_lines(network, 700, mindist = 375)\n\n\nlixel length set to 700m,\nminimum lixel length set to 350m\n\nAfter splitting into lixels, if the length of a lixel is less than mindist, it is then added to the previous lixel. THe default mindist is 1/10th of the maxdist.\nNext, lines_center() is used to generate a SpatialPointsDataFrame with line centre points:\n\n#samples &lt;- lines_center(lixels)\n\nUse the code below to compute NKDE:"
   },
   {
     "objectID": "ICE/ex2/ice2.html",
@@ -180,5 +180,47 @@
     "title": "About",
     "section": "",
     "text": "About this site\n\n1 + 1\n\n[1] 2"
+  },
+  {
+    "objectID": "ICE/ex4/ice4.html",
+    "href": "ICE/ex4/ice4.html",
+    "title": "ICE 4",
+    "section": "",
+    "text": "#SpatioTemporalPointPatternAnalysis\nA spatio-temporal point process is a random collection of points, where each point represents the time and location of an event."
+  },
+  {
+    "objectID": "ICE/ex4/ice4.html#installlaunch-r",
+    "href": "ICE/ex4/ice4.html#installlaunch-r",
+    "title": "ICE 4",
+    "section": "Install/Launch R",
+    "text": "Install/Launch R\nforest fire or something\n\npacman::p_load(sf, raster, spatstat, sparr, tmap, tidyverse)"
+  },
+  {
+    "objectID": "HOE/ex4/ex4.html#installlaunch-r-packages",
+    "href": "HOE/ex4/ex4.html#installlaunch-r-packages",
+    "title": "Ex4",
+    "section": "",
+    "text": "This exercises uses the R packages sf , tmap, spNetwork, and tidyverse.\n\n#pacman::p_load(sf, tmap, spNetwork, tidyverse)"
+  },
+  {
+    "objectID": "HOE/ex4/ex4.html#download-and-import-data",
+    "href": "HOE/ex4/ex4.html#download-and-import-data",
+    "title": "Ex4",
+    "section": "",
+    "text": "Download the following:\nPunggol_St\nPunggol_CC\nUsing st_read(), import the following geospatial data into R:\n\n#network &lt;- st_read(dsn = \"data\", layer = \"Punggol_St\")\n\n\n#childcare &lt;- st_read(dsn = \"data\", layer = \"Punggol_CC\")\n\nVisualise the data using the code below:\n\n#plot(st_geometry(network))\n#plot(childcare, add = T, col = 'red', pch = 19)\n\n\n#tmap_mode('view')\n#tmap_shape(childcare) +\n#  tm_dots() +\n#  tm_shape(network) +\n#  tm_lines()\n\n\n#tmap_mode('plot')"
+  },
+  {
+    "objectID": "HOE/ex4/ex4.html#nkde-analysis",
+    "href": "HOE/ex4/ex4.html#nkde-analysis",
+    "title": "Ex4",
+    "section": "",
+    "text": "Before computing NKDE, the SpatialLines object needs to be cut into lixels according to a chosen resolution, using lixelize_lines().\n\n#lixels &lt;- lixelize_lines(network, 700, mindist = 375)\n\n\nlixel length set to 700m,\nminimum lixel length set to 350m\n\nAfter splitting into lixels, if the length of a lixel is less than mindist, it is then added to the previous lixel. THe default mindist is 1/10th of the maxdist.\nNext, lines_center() is used to generate a SpatialPointsDataFrame with line centre points:\n\n#samples &lt;- lines_center(lixels)\n\nUse the code below to compute NKDE:"
+  },
+  {
+    "objectID": "ICE/ex4/ice4.html#import-the-data",
+    "href": "ICE/ex4/ice4.html#import-the-data",
+    "title": "ICE 4",
+    "section": "Import the data",
+    "text": "Import the data\n\nkbb &lt;- st_read(dsn = \"data/rawdata\", layer = \"Kepulauan_Bangka_Belitung\")\n\nReading layer `Kepulauan_Bangka_Belitung' from data source \n  `C:\\Users\\pwnyt\\Documents\\GitHub\\415\\ICE\\ex4\\data\\rawdata' \n  using driver `ESRI Shapefile'\nSimple feature collection with 298 features and 27 fields\nGeometry type: POLYGON\nDimension:     XYZ\nBounding box:  xmin: 105.1085 ymin: -3.116593 xmax: 106.8488 ymax: -1.501603\nz_range:       zmin: 0 zmax: 0\nGeodetic CRS:  WGS 84\n\n\n\nkbb_sf &lt;- st_read(dsn = \"data/rawdata\", layer = \"Kepulauan_Bangka_Belitung\") %&gt;%\n  st_union() %&gt;%\n  st_zm(drop = TRUE, what = \"ZM\") %&gt;%\n  st_transform(crs = 32748)\n\nReading layer `Kepulauan_Bangka_Belitung' from data source \n  `C:\\Users\\pwnyt\\Documents\\GitHub\\415\\ICE\\ex4\\data\\rawdata' \n  using driver `ESRI Shapefile'\nSimple feature collection with 298 features and 27 fields\nGeometry type: POLYGON\nDimension:     XYZ\nBounding box:  xmin: 105.1085 ymin: -3.116593 xmax: 106.8488 ymax: -1.501603\nz_range:       zmin: 0 zmax: 0\nGeodetic CRS:  WGS 84\n\n\nst_as_s2(): dropping Z and/or M coordinate\n\n\nconvert kbb to owin object\n\nkbb_owin &lt;- as.owin(kbb_sf)\nkbb_owin\n\nwindow: polygonal boundary\nenclosing rectangle: [512066.8, 705559.4] x [9655398, 9834006] units\n\n\ncheck owin\n\nclass(kbb_owin)\n\n[1] \"owin\"\n\n\nForest Fire data\n\nfire_sf &lt;- read.csv(\"data/rawdata/forestfires.csv\") %&gt;%\n  st_as_sf(coords = c(\"longitude\", \"latitude\"), crs = 4326) %&gt;%\n  st_transform(crs = 32748)\n\n\nfire_sf &lt;- fire_sf %&gt;%\n  mutate(DayOfYear = yday(acq_date)) %&gt;%\n  mutate(Month_num = month(acq_date)) %&gt;%\n  mutate(Month_fac = month(acq_date, label = TRUE, abbr = FALSE))\n\nPlotting map showing the distribution of fire points\n\ntm_shape(kbb_sf) + tm_polygons() + tm_shape(fire_sf) + tm_dots()\n\n\n\n\n\n\n\n\nPlotting map showing the distribution of fire points by month\n\ntm_shape(kbb_sf) + tm_polygons() + tm_shape(fire_sf) + tm_dots(size = 0.1) + tm_facets(by = \"Month_fac\", free.coords = FALSE, drop.units = TRUE) \n\n\n\n\n\n\n\n\n##Compute STKDE ###By Month\n\nfire_month &lt;- fire_sf %&gt;%\n  select(Month_num)\n\nmake ppp object\n\nfire_month_ppp &lt;- as.ppp(fire_month)\nfire_month_ppp\n\nMarked planar point pattern: 741 points\nmarks are numeric, of storage type  'double'\nwindow: rectangle = [521564.1, 695791] x [9658137, 9828767] units\n\n\ncheck ppp object\n\nsummary(fire_month_ppp)\n\nMarked planar point pattern:  741 points\nAverage intensity 2.49258e-08 points per square unit\n\nCoordinates are given to 10 decimal places\n\nmarks are numeric, of type 'double'\nSummary:\n   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. \n  1.000   8.000   9.000   8.579  10.000  12.000 \n\nWindow: rectangle = [521564.1, 695791] x [9658137, 9828767] units\n                    (174200 x 170600 units)\nWindow area = 29728200000 square units\n\n\ncheck for duplicated points\n\nany(duplicated(fire_month_ppp))\n\n[1] FALSE\n\n\ncombine ppp w owin\n\nfire_month_owin &lt;- fire_month_ppp[kbb_owin]\nsummary(fire_month_owin)\n\nMarked planar point pattern:  741 points\nAverage intensity 6.424519e-08 points per square unit\n\nCoordinates are given to 10 decimal places\n\nmarks are numeric, of type 'double'\nSummary:\n   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. \n  1.000   8.000   9.000   8.579  10.000  12.000 \n\nWindow: polygonal boundary\n2 separate polygons (no holes)\n           vertices        area relative.area\npolygon 1     47493 11533600000      1.00e+00\npolygon 2       256      306427      2.66e-05\nenclosing rectangle: [512066.8, 705559.4] x [9655398, 9834006] units\n                     (193500 x 178600 units)\nWindow area = 11533900000 square units\nFraction of frame area: 0.334\n\n\n\nst_kde &lt;- spattemp.density(fire_month_owin)\n\nCalculating trivariate smooth...Done.\nEdge-correcting...Done.\nConditioning on time...Done.\n\nsummary(st_kde)\n\nSpatiotemporal Kernel Density Estimate\n\nBandwidths\n  h = 15102.47 (spatial)\n  lambda = 0.0304 (temporal)\n\nNo. of observations\n  741 \n\nSpatial bound\n  Type: polygonal\n  2D enclosure: [512066.8, 705559.4] x [9655398, 9834006]\n\nTemporal bound\n  [1, 12]\n\nEvaluation\n  128 x 128 x 12 trivariate lattice\n  Density range: [1.233458e-27, 8.202976e-10]\n\n\nplotting STKDE by last 6 months\n\ntims &lt;- c(7,8,9,10,11,12)\npar(mfcol = c(2,3))\nfor(i in tims){\n  plot(st_kde, i,\n       override.par = FALSE,\n       fix.range = TRUE,\n       main = paste(\"KDE at month\", i))\n}\n\n\n\n\n\n\n\n\n###By Day create ppp object\n\nfire_yday_ppp &lt;- fire_sf %&gt;%\n  select(DayOfYear) %&gt;%\n  as.ppp()\n\ncombine ppp and owin\n\nfire_yday_owin &lt;- fire_yday_ppp[kbb_owin]\nsummary(fire_yday_owin)\n\nMarked planar point pattern:  741 points\nAverage intensity 6.424519e-08 points per square unit\n\nCoordinates are given to 10 decimal places\n\nmarks are numeric, of type 'double'\nSummary:\n   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. \n   10.0   213.0   258.0   245.9   287.0   352.0 \n\nWindow: polygonal boundary\n2 separate polygons (no holes)\n           vertices        area relative.area\npolygon 1     47493 11533600000      1.00e+00\npolygon 2       256      306427      2.66e-05\nenclosing rectangle: [512066.8, 705559.4] x [9655398, 9834006] units\n                     (193500 x 178600 units)\nWindow area = 11533900000 square units\nFraction of frame area: 0.334\n\n\n\nkde_yday &lt;- spattemp.density(fire_yday_owin)\n\nCalculating trivariate smooth...Done.\nEdge-correcting...Done.\nConditioning on time...Done.\n\nsummary(kde_yday)\n\nSpatiotemporal Kernel Density Estimate\n\nBandwidths\n  h = 15102.47 (spatial)\n  lambda = 6.3198 (temporal)\n\nNo. of observations\n  741 \n\nSpatial bound\n  Type: polygonal\n  2D enclosure: [512066.8, 705559.4] x [9655398, 9834006]\n\nTemporal bound\n  [10, 352]\n\nEvaluation\n  128 x 128 x 343 trivariate lattice\n  Density range: [3.959516e-27, 2.751287e-12]\n\n\n\n#plot(kde_yday)"
   }
 ]

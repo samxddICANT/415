@@ -34,11 +34,11 @@ pacman::p_load(tmap, sf, tidyverse, raster, spatstat, maptools, sp)
 
 Download the following:
 
--   [Childcare Services](https://data.gov.sg/collections/2015/view) (GeoJSON)
+[Childcare Services](https://data.gov.sg/collections/2015/view) (GeoJSON)
 
--   [Master Plan 2014 Subzone Boundary Data](https://beta.data.gov.sg/datasets/d_d14da225fccf921049ab64238ff473d9/view)
+[Master Plan 2014 Subzone Boundary Data](https://beta.data.gov.sg/datasets/d_d14da225fccf921049ab64238ff473d9/view)
 
--   CostalOutline from SLA
+CostalOutline from SLA
 
 Using st_read(), import the following geospatial data into R:
 

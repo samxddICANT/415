@@ -1,0 +1,146 @@
+---
+title: "ICE 4"
+date: "September 9, 2024"
+date-modified: "last-modified"
+execute: 
+  eval: true
+  echo: true
+  freeze: true
+---
+#SpatioTemporalPointPatternAnalysis
+
+A spatio-temporal point process is a random collection of points, where each point represents the time and location of an event.
+
+
+
+## Install/Launch R
+
+```{R}
+
+```
+forest fire or something
+
+```{r}
+pacman::p_load(sf, raster, spatstat, sparr, tmap, tidyverse)
+```
+
+## Import the data
+```{r}
+kbb <- st_read(dsn = "data/rawdata", layer = "Kepulauan_Bangka_Belitung")
+```
+
+
+```{r}
+kbb_sf <- st_read(dsn = "data/rawdata", layer = "Kepulauan_Bangka_Belitung") %>%
+  st_union() %>%
+  st_zm(drop = TRUE, what = "ZM") %>%
+  st_transform(crs = 32748)
+```
+
+
+convert kbb to owin object
+```{r}
+kbb_owin <- as.owin(kbb_sf)
+kbb_owin
+```
+check owin
+```{r}
+class(kbb_owin)
+```
+
+Forest Fire data
+```{r}
+fire_sf <- read.csv("data/rawdata/forestfires.csv") %>%
+  st_as_sf(coords = c("longitude", "latitude"), crs = 4326) %>%
+  st_transform(crs = 32748)
+```
+
+```{r}
+fire_sf <- fire_sf %>%
+  mutate(DayOfYear = yday(acq_date)) %>%
+  mutate(Month_num = month(acq_date)) %>%
+  mutate(Month_fac = month(acq_date, label = TRUE, abbr = FALSE))
+```
+
+Plotting map showing the distribution of fire points
+```{r}
+tm_shape(kbb_sf) + tm_polygons() + tm_shape(fire_sf) + tm_dots()
+```
+
+Plotting map showing the distribution of fire points by month
+```{r}
+tm_shape(kbb_sf) + tm_polygons() + tm_shape(fire_sf) + tm_dots(size = 0.1) + tm_facets(by = "Month_fac", free.coords = FALSE, drop.units = TRUE) 
+```
+
+##Compute STKDE
+###By Month
+```{r}
+fire_month <- fire_sf %>%
+  select(Month_num)
+```
+
+
+make ppp object
+```{r}
+fire_month_ppp <- as.ppp(fire_month)
+fire_month_ppp
+```
+
+
+check ppp object
+```{r}
+summary(fire_month_ppp)
+```
+
+check for duplicated points
+```{r}
+any(duplicated(fire_month_ppp))
+```
+
+combine ppp w owin
+```{r}
+fire_month_owin <- fire_month_ppp[kbb_owin]
+summary(fire_month_owin)
+```
+
+```{r}
+st_kde <- spattemp.density(fire_month_owin)
+summary(st_kde)
+```
+
+plotting STKDE by last 6 months 
+```{r}
+#| fig-width: 12
+#| fig-height: 10
+
+tims <- c(7,8,9,10,11,12)
+par(mfcol = c(2,3))
+for(i in tims){
+  plot(st_kde, i,
+       override.par = FALSE,
+       fix.range = TRUE,
+       main = paste("KDE at month", i))
+}
+```
+###By Day
+create ppp object
+```{r}
+fire_yday_ppp <- fire_sf %>%
+  select(DayOfYear) %>%
+  as.ppp()
+```
+combine ppp and owin
+```{r}
+fire_yday_owin <- fire_yday_ppp[kbb_owin]
+summary(fire_yday_owin)
+```
+
+```{r}
+kde_yday <- spattemp.density(fire_yday_owin)
+summary(kde_yday)
+```
+
+```{r}
+#plot(kde_yday)
+```
+
