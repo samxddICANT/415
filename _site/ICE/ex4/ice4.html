@@ -243,7 +243,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Modified</div>
     <div class="quarto-title-meta-contents">
-      <p class="date-modified">September 9, 2024</p>
+      <p class="date-modified">September 10, 2024</p>
     </div>
   </div>
     
@@ -260,7 +260,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h2 class="anchored" data-anchor-id="installlaunch-r">Install/Launch R</h2>
 <p>forest fire or something</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(sf, raster, spatstat, sparr, tmap, tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(sf, raster, spatstat, sparr, tmap, tidyverse, gifski, animation)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="import-the-data" class="level2">
@@ -528,6 +528,109 @@ Evaluation
 </div>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="co">#plot(kde_yday)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(animation)</span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(spatstat)</span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(fmd)</span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a>fmd_case <span class="ot">&lt;-</span> fmd<span class="sc">$</span>cases</span>
+<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a>fmd_cont <span class="ot">&lt;-</span> fmd<span class="sc">$</span>controls</span>
+<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-8"><a href="#cb37-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Estimate bandwidths and create density/risk maps</span></span>
+<span id="cb37-9"><a href="#cb37-9" aria-hidden="true" tabindex="-1"></a>hlam <span class="ot">&lt;-</span> <span class="fu">LIK.spattemp</span>(fmd_case)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>h = 5.86446 ; lambda = 5.535485 
+h = 6.450906 ; lambda = 5.535485 
+h = 5.86446 ; lambda = 6.121931 
+h = 5.278014 ; lambda = 6.121931 
+h = 4.691568 ; lambda = 6.415154 
+h = 4.691568 ; lambda = 7.0016 
+h = 4.105122 ; lambda = 7.734658 
+h = 2.93223 ; lambda = 8.027881 
+h = 1.466115 ; lambda = 8.980855 
+h = 2.345784 ; lambda = 9.347384 
+h = 2.93223 ; lambda = 8.614327 
+h = 1.759338 ; lambda = 8.90755 
+h = 3.518676 ; lambda = 8.027881 
+h = 2.345784 ; lambda = 8.614327 
+h = 3.225453 ; lambda = 8.174492 
+h = 2.639007 ; lambda = 8.467715 
+h = 3.078841 ; lambda = 8.247798 
+h = 3.078841 ; lambda = 8.834244 
+h = 3.042189 ; lambda = 8.632653 
+h = 2.895577 ; lambda = 8.999182 
+h = 2.803945 ; lambda = 9.374874 
+h = 2.785618 ; lambda = 8.980855 
+h = 2.978046 ; lambda = 8.719704 
+h = 2.849761 ; lambda = 8.893805 
+h = 2.945975 ; lambda = 8.763229 
+h = 2.909322 ; lambda = 9.148084 
+h = 2.926503 ; lambda = 8.747766 
+h = 2.976901 ; lambda = 8.511813 
+h = 2.915908 ; lambda = 8.87734 
+h = 2.896436 ; lambda = 8.861877 
+h = 2.908821 ; lambda = 8.837215 
+h = 2.898226 ; lambda = 8.966788 
+h = 2.919434 ; lambda = 8.802521 
+h = 2.912346 ; lambda = 8.762397 
+h = 2.915018 ; lambda = 8.848604 
+h = 2.92563 ; lambda = 8.813911 
+h = 2.934035 ; lambda = 8.802259 
+h = 2.930047 ; lambda = 8.767828 
+h = 2.918775 ; lambda = 8.82841 
+h = 2.924972 ; lambda = 8.839799 
+h = 2.923587 ; lambda = 8.83048 
+h = 2.916731 ; lambda = 8.844979 
+h = 2.923406 ; lambda = 8.821678 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>f.breve <span class="ot">&lt;-</span> <span class="fu">spattemp.density</span>(fmd_case, <span class="at">h=</span>hlam[<span class="dv">1</span>], <span class="at">lambda=</span>hlam[<span class="dv">2</span>], <span class="at">tlim=</span><span class="fu">c</span>(<span class="dv">10</span>, <span class="dv">352</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Calculating trivariate smooth...Done.
+Edge-correcting...Done.
+Conditioning on time...Done.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>g.tilde <span class="ot">&lt;-</span> <span class="fu">bivariate.density</span>(fmd_cont, <span class="at">h0=</span>hlam[<span class="dv">1</span>])</span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>rho.breve <span class="ot">&lt;-</span> <span class="fu">spattemp.risk</span>(<span class="at">f=</span>f.breve, <span class="at">g=</span>g.tilde, <span class="at">tolerate=</span><span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Calculating ratio...Done.
+Ensuring finiteness...
+   --joint--
+   --conditional--
+Done.
+Calculating tolerance contours...
+   --convolution 1--
+   --convolution 2--
+Done.</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Set up color map</span></span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>colpal <span class="ot">&lt;-</span> <span class="fu">spatstat.options</span>(<span class="st">"image.colfun"</span>)</span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Adjust the color map accordingly</span></span>
+<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a>fmdcolours <span class="ot">&lt;-</span> <span class="fu">colourmap</span>(<span class="fu">colpal</span>(<span class="dv">320</span>), <span class="at">breaks=</span><span class="fu">c</span>(<span class="sc">-</span><span class="dv">80</span>, <span class="fu">seq</span>(<span class="sc">-</span><span class="dv">7</span>,<span class="dv">4</span>,<span class="at">length=</span><span class="dv">320</span>)))</span>
+<span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-7"><a href="#cb43-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Time range for KDE plot</span></span>
+<span id="cb43-8"><a href="#cb43-8" aria-hidden="true" tabindex="-1"></a>mytimes <span class="ot">&lt;-</span> <span class="dv">10</span><span class="sc">:</span><span class="dv">352</span></span>
+<span id="cb43-9"><a href="#cb43-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-10"><a href="#cb43-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Save the animation as a GIF</span></span>
+<span id="cb43-11"><a href="#cb43-11" aria-hidden="true" tabindex="-1"></a>animation<span class="sc">::</span><span class="fu">saveGIF</span>(</span>
+<span id="cb43-12"><a href="#cb43-12" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(mytimes)) {</span>
+<span id="cb43-13"><a href="#cb43-13" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Plot KDE with time selection</span></span>
+<span id="cb43-14"><a href="#cb43-14" aria-hidden="true" tabindex="-1"></a>    <span class="fu">plot</span>(rho.breve, <span class="at">tselect=</span>mytimes[i], <span class="at">type=</span><span class="st">"conditional"</span>, <span class="at">col=</span>fmdcolours,</span>
+<span id="cb43-15"><a href="#cb43-15" aria-hidden="true" tabindex="-1"></a>         <span class="at">tol.args=</span><span class="fu">list</span>(<span class="at">levels=</span><span class="fu">c</span>(<span class="fl">0.05</span>, <span class="fl">0.0001</span>), <span class="at">lty=</span><span class="dv">2</span><span class="sc">:</span><span class="dv">1</span>, <span class="at">drawlabels=</span><span class="cn">FALSE</span>),</span>
+<span id="cb43-16"><a href="#cb43-16" aria-hidden="true" tabindex="-1"></a>         <span class="at">sleep=</span><span class="dv">0</span>, <span class="at">override.par=</span><span class="cn">FALSE</span>, <span class="at">fix.range=</span><span class="cn">TRUE</span>)</span>
+<span id="cb43-17"><a href="#cb43-17" aria-hidden="true" tabindex="-1"></a>    <span class="fu">title</span>(<span class="at">xlab=</span><span class="st">"Easting"</span>, <span class="at">ylab=</span><span class="st">"Northing"</span>)</span>
+<span id="cb43-18"><a href="#cb43-18" aria-hidden="true" tabindex="-1"></a>  },</span>
+<span id="cb43-19"><a href="#cb43-19" aria-hidden="true" tabindex="-1"></a>  <span class="at">movie.name=</span><span class="st">"fmd_updated.gif"</span>, <span class="at">ani.width=</span><span class="dv">640</span>, <span class="at">ani.height=</span><span class="dv">640</span>, <span class="at">interval=</span><span class="dv">1</span><span class="sc">/</span><span class="dv">12</span></span>
+<span id="cb43-20"><a href="#cb43-20" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Output at: fmd_updated.gif</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] TRUE</code></pre>
+</div>
 </div>
 
 

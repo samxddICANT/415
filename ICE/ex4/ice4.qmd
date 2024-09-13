@@ -21,7 +21,7 @@ A spatio-temporal point process is a random collection of points, where each poi
 forest fire or something
 
 ```{r}
-pacman::p_load(sf, raster, spatstat, sparr, tmap, tidyverse)
+pacman::p_load(sf, raster, spatstat, sparr, tmap, tidyverse, gifski, animation)
 ```
 
 ## Import the data
@@ -144,3 +144,40 @@ summary(kde_yday)
 #plot(kde_yday)
 ```
 
+```{r}
+library(animation)
+library(spatstat)
+
+data(fmd)
+fmd_case <- fmd$cases
+fmd_cont <- fmd$controls
+
+# Estimate bandwidths and create density/risk maps
+hlam <- LIK.spattemp(fmd_case)
+f.breve <- spattemp.density(fmd_case, h=hlam[1], lambda=hlam[2], tlim=c(10, 352))
+g.tilde <- bivariate.density(fmd_cont, h0=hlam[1])
+rho.breve <- spattemp.risk(f=f.breve, g=g.tilde, tolerate=TRUE)
+```
+
+```{r}
+# Set up color map
+colpal <- spatstat.options("image.colfun")
+
+# Adjust the color map accordingly
+fmdcolours <- colourmap(colpal(320), breaks=c(-80, seq(-7,4,length=320)))
+
+# Time range for KDE plot
+mytimes <- 10:352
+
+# Save the animation as a GIF
+animation::saveGIF(
+  for (i in 1:length(mytimes)) {
+    # Plot KDE with time selection
+    plot(rho.breve, tselect=mytimes[i], type="conditional", col=fmdcolours,
+         tol.args=list(levels=c(0.05, 0.0001), lty=2:1, drawlabels=FALSE),
+         sleep=0, override.par=FALSE, fix.range=TRUE)
+    title(xlab="Easting", ylab="Northing")
+  },
+  movie.name="fmd_updated.gif", ani.width=640, ani.height=640, interval=1/12
+)
+```
