@@ -38,6 +38,10 @@ website:
             href: "ICE/ex5/ice5.html"
           - text: "ice6"
             href: "ICE/ex6/ice6.html"
+      - text:  "Takehomes"
+        menu:
+          - text: "th1"
+            href: "THE/THE1/takehome1.html"
     right: 
       - href: index.qmd
         text: Home

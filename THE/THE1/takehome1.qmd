@@ -1,0 +1,955 @@
+---
+title: "Takehome 1"
+date: "September 11, 2024"
+date-modified: "last-modified"
+execute: 
+  eval: true
+  echo: true
+  freeze: true
+format:
+  html:
+    toc: true
+---
+
+# Introduction: Armed Conflict in Myanmar
+
+Myanmar, formerly known as Burma, is a country in Southeast Asia with a rich cultural heritage and a complex, often troubled modern history. With a population of about 54 million people and over 135 distinct ethnic groups, Myanmar is a tapestry of diverse cultures, languages, and traditions. However, this diversity has also been a source of long-standing tensions and conflicts.
+
+## Historical Context
+
+Since gaining independence from British rule in 1948, Myanmar was under military rule, which ended officially in 2011. However, in February 2021, the military seized power again in a coup, leading to a resumption of armed conflict and violence in the country.
+
+This geospatial analysis of armed conflict in Myanmar aims to:
+
+1\. **Identify** patterns and hotspots of conflict,
+
+2\. **Examine** how they factors interact with each other,
+
+3\. **Track** changes in conflict patterns over time.
+
+## Install/Launch R Packages
+
+This exercise uses the R packages *sf, raster, spatstat, tmap, tidyverse, maptools, sp, sparr, st,* and *ggplot2*.
+
+```{r}
+
+install.packages("maptools", repos = "https://packagemanager.posit.co/cran/2023-10-13")
+```
+
+```{r}
+
+pacman::p_load(sf, raster, spatstat, tmap, tidyverse, maptools, sp, sparr, st, ggplot2)
+```
+
+## Import Data
+
+The following datasets will be used:
+
+-   Armed Conflict Location and Event Data (ACLED)
+
+-   Myanmar Information Management Unit (MIMU)
+
+read_csv from readr and st_as_sf from sf from saves the data into a sf object, and st_transform does projection transformation to the proper correct coordinate system:
+
+```{r}
+acled_sf <- read_csv("data/2021-01-01-2024-06-30-Myanmar.csv") %>%
+  st_as_sf(coords = c("longitude", "latitude"),
+           crs = 4326) %>%
+  st_transform(crs = 32647) %>%
+  mutate(event_date = dmy(event_date))
+```
+
+Mutate by quarters:
+
+```{r}
+acled_sf <- acled_sf %>%
+  mutate(quarter = quarter(event_date))
+```
+
+Check the sf object:
+
+```{r}
+summary(acled_sf)
+```
+
+Plotting out all political violence events by year:
+
+```{r}
+tmap_mode("plot")
+
+plots <- list()
+
+for (year_val in 2021:2024) {
+  p <- acled_sf %>%
+    filter(year == year_val | event_type == "Political violence") %>%
+    tm_shape() +
+    tm_dots() +
+    tm_layout(
+      title = paste0("Year: ", year_val),
+      title.position = c("left", "bottom"),  
+      title.size = 0.8
+    )
+  
+  # Add each plot to the list
+  plots[[paste0("plot_", year_val)]] <- p
+}
+
+# Arrange the plots in a 2x2 grid
+tmap_arrange(plots$plot_2021, plots$plot_2022, plots$plot_2023, plots$plot_2024, nrow = 2, ncol = 2)
+
+```
+
+glimpse() from dplyr reveals the datatype of every field:
+
+```{r}
+glimpse(acled_sf)
+```
+
+Import the myanmar border shapefile as a polygon feature dataframe using st_read from sf:
+
+```{r}
+myanmar_sf <- st_read(dsn = "data/mmr_polbnda_adm0_250k_mimu_1", 
+                layer = "mmr_polbnda_adm0_250k_mimu_1") %>%
+  st_as_sf(coords =c(
+    "longitude", "latitude"),
+           crs = 4326) %>%
+  st_transform(crs = 32647)
+```
+
+Compare and ensure that our data follows Myanmar's CRS system WGS84 for consistency:
+
+```{r}
+# Check CRS of acled_sf
+print("CRS of ACLED data:")
+print(st_crs(acled_sf))
+```
+
+Create a simple plot of the Myanmar border:
+
+```{r}
+
+tm_shape(myanmar_sf) +
+  tm_borders(col = "green", lwd = 2) +
+  tm_fill(col = "lightblue", alpha = 0.5) +
+  tm_layout(title = "Myanmar Border",
+            title.size = 1.2,
+            title.position = c("center", "top"))
+```
+
+Filter ACLED data for the specified date range and event types
+
+```{r}
+event_types <- c("Battles", "Explosions/Remote violence", "Strategic developments", "Violence against civilians")
+acled_filtered <- acled_sf %>%
+  filter(event_type %in% event_types)
+summary(acled_filtered)
+```
+
+## KDE
+
+Creating window for ppp objects:
+
+```{r}
+myanmar_owin <- as.owin(myanmar_sf)
+plot(myanmar_owin)
+```
+
+```{r}
+summary(myanmar_owin)
+```
+
+Create the quarter column:
+
+```{r}
+acled_filtered$Quarter <- paste0(year(acled_filtered$event_date), "_Q", quarter(acled_filtered$event_date))
+
+acled_filtered$QuarterNumeric <- (year(acled_filtered$event_date) - 2021) * 4 + quarter(acled_filtered$event_date)
+
+acled_quarter <- st_sf(
+  QuarterNumeric = acled_filtered$QuarterNumeric,
+  geometry = st_geometry(acled_filtered), 
+  admin1 = acled_filtered$admin1
+)
+
+quarters_list <- list()
+
+unique_quarters <- unique(acled_filtered$QuarterNumeric)
+
+for (q in unique_quarters) {
+  acled_q <- acled_filtered[acled_filtered$QuarterNumeric == q, ]
+  
+  acled_q_sf <- st_sf(
+    QuarterNumeric = acled_q$QuarterNumeric,
+    geometry = st_geometry(acled_q)
+  )
+  t
+  quarters_list[[paste0("Quarter_", q)]] <- acled_q_sf
+}
+```
+
+```{r}
+ppp_list <- list()
+
+for (i in names(quarters_list)) {
+  q_sf <- quarters_list[[i]]
+  
+  q_ppp <- as.ppp(st_coordinates(q_sf), st_bbox(q_sf))
+  
+  ppp_list[[i]] <- q_ppp
+}
+
+```
+
+```{r}
+#| echo: false
+#for stkde
+acled_quarter_ppp <- as.ppp(acled_quarter)
+```
+
+Use jittering to avoid duplicated datapoints on the same location:
+
+```{r}
+#| echo: false
+#for stkde 
+acled_jit <- rjitter(acled_quarter_ppp, retry=TRUE, nsim=1, drop=TRUE)
+
+```
+
+```{r}
+#| echo: false
+#for stkde
+if (any(duplicated(acled_jit))) {
+  warning("Duplicates remaining")
+}
+```
+
+```{r}
+jittered_ppp_list <- list()
+
+for (i in names(ppp_list)) {
+  jittered_ppp <- rjitter(ppp_list[[i]], , retry=TRUE, nsim=1, drop=TRUE)
+  
+  jittered_ppp_list[[i]] <- jittered_ppp
+}
+
+```
+
+check duplicates
+
+```{r}
+any(duplicated(jittered_ppp_list[[7]]))
+
+
+```
+
+merge with owin object
+
+```{r}
+armedconflict_ppp_list <- list()
+
+for (i in names(jittered_ppp_list)){
+  armedconflict_ppp <- jittered_ppp_list[[i]][myanmar_owin]
+  
+  armedconflict_ppp_list[[i]] <- armedconflict_ppp
+}
+
+```
+
+```{r}
+#| echo: false
+#for stkde
+ac_ppp <- acled_jit[myanmar_owin]
+summary(ac_ppp)
+```
+
+Plotting Armed Conflict ppp:
+
+```{r}
+#plot(armedconflict_ppp)
+plot(armedconflict_ppp_list[[1]])
+```
+
+Rescale to kilometers:
+
+```{r}
+armedconflict_ppp_km_list <- list()
+
+for (i in names(armedconflict_ppp_list)){
+  armedconflict_ppp_km <- rescale.ppp(armedconflict_ppp_list[[i]], 1000, "km")
+  
+  armedconflict_ppp_km_list[[i]] <- armedconflict_ppp_km
+}
+
+```
+
+Plotting quarterly KDE:
+
+```{r}
+par(mfrow = c(2,2))
+par(mar = c(3,2,2,1))
+plot(density(armedconflict_ppp_km_list[[1]], 
+             sigma = bw.diggle,
+             edge = TRUE,
+             kernel = "gaussian"), main = "2021 Q1")
+plot(density(armedconflict_ppp_km_list[[2]], 
+             sigma = bw.diggle,
+             edge = TRUE,
+             kernel = "gaussian"), main = "2021 Q2")
+plot(density(armedconflict_ppp_km_list[[3]], 
+             sigma = bw.diggle,
+             edge = TRUE,
+             kernel = "gaussian"), main = "2021 Q3")
+plot(density(armedconflict_ppp_km_list[[4]], 
+             sigma = bw.diggle,
+             edge = TRUE,
+             kernel = "gaussian"), main = "2021 Q4")
+
+```
+
+```{r}
+par(mfrow = c(2,2))
+par(mar = c(3,2,2,1))
+plot(density(armedconflict_ppp_km_list[[5]], 
+             sigma = bw.diggle,
+             edge = TRUE,
+             kernel = "gaussian"), main = "2021 Q1")
+plot(density(armedconflict_ppp_km_list[[6]], 
+             sigma = bw.diggle,
+             edge = TRUE,
+             kernel = "gaussian"), main = "2021 Q2")
+plot(density(armedconflict_ppp_km_list[[7]], 
+             sigma = bw.diggle,
+             edge = TRUE,
+             kernel = "gaussian"), main = "2021 Q3")
+plot(density(armedconflict_ppp_km_list[[8]], 
+             sigma = bw.diggle,
+             edge = TRUE,
+             kernel = "gaussian"), main = "2021 Q4")
+
+```
+
+```{r}
+par(mfrow = c(2,2))
+par(mar = c(3,2,2,1))
+plot(density(armedconflict_ppp_km_list[[9]], 
+             sigma = bw.diggle,
+             edge = TRUE,
+             kernel = "gaussian"), main = "2023 Q1")
+plot(density(armedconflict_ppp_km_list[[10]], 
+             sigma = bw.diggle,
+             edge = TRUE,
+             kernel = "gaussian"), main = "2023 Q2")
+plot(density(armedconflict_ppp_km_list[[11]], 
+             sigma = bw.diggle,
+             edge = TRUE,
+             kernel = "gaussian"), main = "2023 Q3")
+plot(density(armedconflict_ppp_km_list[[12]], 
+             sigma = bw.diggle,
+             edge = TRUE,
+             kernel = "gaussian"), main = "2023 Q4")
+
+```
+
+```{r}
+par(mfrow = c(1,2))
+plot(density(armedconflict_ppp_km_list[[13]], 
+             sigma = bw.diggle,
+             edge = TRUE,
+             kernel = "gaussian"), main = "2024 Q1")
+plot(density(armedconflict_ppp_km_list[[14]], 
+             sigma = bw.diggle,
+             edge = TRUE,
+             kernel = "gaussian"), main = "2024 Q2")
+
+```
+
+## STKDE
+
+Plotting STKDE:
+
+```{r}
+st_kde <- spattemp.density(ac_ppp)
+summary(st_kde)
+```
+
+```{r}
+plot_stkde_quarters <- function(start_quarter) {
+  quarters <- start_quarter:(start_quarter + 3)
+  par(mfrow=c(2,2), mar=c(2,2,2,1))  # Set the layout to 2x2 grid
+  
+  for(i in quarters) {
+    plot(st_kde, i, 
+         override.par=FALSE, 
+         fix.range=TRUE, 
+         main=paste("STKDE Q", i, "(", floor((i-1)/4 + 2021), "Q", (i-1)%% 4 + 1, ")"),
+         ribbon=TRUE)  # Ribbon remains on for informative plots
+  }
+  
+}
+
+```
+
+```{r}
+#just to plot the last 2 
+plot_stkde_quarters2 <- function(start_quarter) {
+  quarters <- start_quarter:(start_quarter + 1)  # Adjusted to plot 4 quarters
+  par(mfrow=c(1,2), mar=c(2,2,2,1))  
+  
+  for(i in quarters) {
+    plot(st_kde, i, 
+         override.par=FALSE, 
+         fix.range=TRUE, 
+         main=paste("STKDE Q", i, "(", floor((i-1)/4 + 2021), "Q", (i-1)%% 4 + 1, ")"),
+         ribbon=TRUE)  # Ribbon remains on for informative plots
+  }
+  
+}
+```
+
+```{r}
+plot_stkde_quarters(1)
+```
+
+```{r}
+plot_stkde_quarters(5)
+```
+
+```{r}
+plot_stkde_quarters(9)
+```
+
+```{r}
+plot_stkde_quarters2(13)
+```
+
+A few observations become apparent:
+
+1.  Areas with heavy conflict are the same areas with high population density(Mandalay/Yangon),
+
+2.  Conflict incidence rate picked up around 2021 Q4,
+
+3.  A small spike in fighting occurred in Shan state, near the border with China during the end of 2023,
+
+4.  Huge increase in armed engagements in 2024 Q2 after a lull at the start of the year, especially in Rakhine(West) and Kayin/Mon(Southeast) states.
+
+Whats the reason behind the large increase in conflicts during 2024? Only god knows — until i ~~google~~ use geospatial analysis to find out haha :\]
+
+Load regional shapefile and make an owin object from it:
+
+```{r}
+reg_sf <- st_read(dsn = "data/mmr_polbnda2_adm1_250k_mimu_1", layer = "mmr_polbnda2_adm1_250k_mimu_1")
+plot(reg_sf)
+```
+
+Transform to match ACLED CRS:
+
+```{r}
+reg_sf <- st_transform(reg_sf , st_crs(acled_sf))
+
+print(st_crs(reg_sf ))
+```
+
+Creating window for ppp object:
+
+```{r}
+reg_owin <- as.owin(reg_sf)
+```
+
+```{r}
+armedconflictreg_ppp <- acled_jit[reg_owin]
+```
+
+```{r}
+armedconflictreg_sf <- st_as_sf(as.data.frame(acled_jit), coords = c("x", "y"), crs = st_crs(reg_sf))
+```
+
+```{r}
+ggplot() +
+  geom_sf(data = reg_sf, aes(fill = ST), alpha = 0.5) +
+  geom_sf(data = armedconflictreg_sf, color = "red", size = 0.5, alpha = 0.6) +
+  theme_minimal() +
+  labs(title = "Armed Conflicts in Myanmar",
+       fill = "State/Region") +
+  theme(legend.position = "bottom")
+```
+
+In the words of former chess world champion vladimir kramnik, "let us begin the procedure"
+
+Comparing between q1 and q14, it is evident that there is significantly increased activity in Rakhine, as well as the areas east of Yangon.
+
+```{r}
+tmap_mode('view')
+tm_shape(quarters_list$Quarter_1)+
+  tm_dots()
+```
+
+```{r}
+tmap_mode('view')
+tm_shape(quarters_list$Quarter_14)+
+  tm_dots()
+```
+
+```{r}
+tmap_mode('plot')
+```
+
+Divine beings have bestowed upon me arcane knowledge to make light of this increase in armed conflicts.
+
+-   [On Rakhine](https://www.lowyinstitute.org/the-interpreter/regime-collapse-myanmar-s-rakhine)
+
+-   [On Mon and Kayin](https://www.aljazeera.com/news/2024/5/1/a-sanctioned-strongman-and-the-fall-of-myanmars-myawaddy)
+
+## Rakhine
+
+Plotting Rakhine state:
+
+```{r}
+
+rak <- reg_sf %>% filter(ST == "Rakhine")
+plot(st_geometry(rak), main = "Rakhine")
+```
+
+```{r}
+par(mfrow=c(2,2))
+par(mar = c(3,2,2,1))
+plot(rak, main = "Rakhine")
+```
+
+```{r}
+rak_owin <- as.owin(rak)
+rak_owin
+```
+
+```{r}
+class(rak_owin)
+```
+
+```{r}
+rak_quarter <- acled_quarter %>%
+  filter(admin1 == "Rakhine")
+```
+
+```{r}
+tm_shape(rak)+
+  tm_polygons()+
+  tm_shape(rak_quarter)+
+  tm_dots(size = 0.1)+
+  tm_facets(by ="QuarterNumeric", free.coords = FALSE, drop.units =TRUE)
+```
+
+```{r}
+rak_q <- rak_quarter %>%
+  select(QuarterNumeric)
+```
+
+```{r}
+rak_q_ppp <- as.ppp(rak_q)
+rak_q_ppp
+```
+
+check ppp object
+
+```{r}
+summary(rak_q_ppp)
+```
+
+```{r}
+any(duplicated(rak_q_ppp))
+```
+
+```{r}
+rak_jit <- rjitter(rak_q_ppp, retry=TRUE, nsim=1, drop=TRUE)
+```
+
+```{r}
+any(duplicated(rak_jit))
+```
+
+```{r}
+rak_q_owin <- rak_jit[rak_owin]
+summary(rak_q_owin)
+```
+
+```{r}
+stkde_rak <- spattemp.density(rak_q_owin)
+summary(stkde_rak)
+```
+
+```{r}
+qs <- c(1,4)
+par(mfcol= c(1,2))
+for( i in qs){
+  plot(stkde_rak, i,
+       override.par = FALSE,
+       fix.range = TRUE,
+       main =  paste("STKDE at Q", i))
+}
+```
+
+```{r}
+qs <- c(8,12)
+par(mfcol= c(1,2))
+for( i in qs){
+  plot(stkde_rak, i,
+       override.par = FALSE,
+       fix.range = TRUE,
+       main =  paste("STKDE at Q", i))
+}
+```
+
+```{r}
+qs <- c(13,14)
+par(mfcol= c(1,2))
+for( i in qs){
+  plot(stkde_rak, i,
+       override.par = FALSE,
+       fix.range = TRUE,
+       main =  paste("STKDE at Q", i))
+}
+```
+
+More evidence showing that the fighting only picked up in 2024, especially in the north and around Thandwe Airport.
+
+G Function
+
+```{r}
+G_rk = Gest(rak_jit, correction = "border")
+plot(G_rk, xlim =c(0,500))
+```
+
+```{r}
+G_rk.csr <- envelope(rak_jit, Gest, nsim = 100)
+```
+
+```{r}
+plot(G_rk.csr)
+```
+
+F Function
+
+```{r}
+F_rk = Fest(rak_jit)
+plot(F_rk)
+```
+
+```{r}
+F_rk.csr <- envelope(rak_jit, Fest, nsim = 100)
+```
+
+```{r}
+plot(F_rk.csr)
+```
+
+## Kayin/Mon
+
+```{r}
+mk <- reg_sf %>% filter(ST %in% c("Kayin", "Mon"))
+plot(st_geometry(mk), main = "Mon & Kayin")
+```
+
+```{r}
+par(mfrow=c(2,2))
+par(mar = c(3,2,2,1))
+plot(mk, main = "Mon & Kayin")
+```
+
+```{r}
+mk_owin <- as.owin(mk)
+mk_owin
+```
+
+```{r}
+class(mk_owin)
+```
+
+```{r}
+mk_quarter <- acled_quarter %>%
+  filter(admin1 %in% c("Kayin", "Mon"))
+```
+
+```{r}
+tm_shape(mk)+
+  tm_polygons()+
+  tm_shape(mk_quarter)+
+  tm_dots(size = 0.1)+
+  tm_facets(by ="QuarterNumeric", free.coords = FALSE, drop.units =TRUE)
+```
+
+```{r}
+mk_q <- mk_quarter %>%
+  select(QuarterNumeric)
+```
+
+```{r}
+mk_q_ppp <- as.ppp(mk_q)
+mk_q_ppp
+```
+
+check ppp object
+
+```{r}
+summary(mk_q_ppp)
+```
+
+```{r}
+any(duplicated(mk_q_ppp))
+```
+
+```{r}
+mk_jit <- rjitter(mk_q_ppp, retry=TRUE, nsim=1, drop=TRUE)
+```
+
+```{r}
+any(duplicated(mk_jit))
+```
+
+```{r}
+mk_q_owin <- mk_jit[mk_owin]
+summary(mk_q_owin)
+```
+
+```{r}
+stkde_mk <- spattemp.density(mk_q_owin)
+summary(stkde_mk)
+```
+
+```{r}
+qs <- c(1,14)
+par(mfrow= c(1,2))
+for( i in qs){
+  plot(stkde_rak, i,
+       override.par = FALSE,
+       fix.range = TRUE,
+       main =  paste("STKDE at Q",i))
+}
+```
+
+G Func:
+
+```{r}
+G_mk = Gest(mk_jit, correction = "border")
+plot(G_mk, xlim =c(0,500))
+```
+
+```{r}
+G_mk.csr <- envelope(mk_jit, Gest, nsim = 100)
+```
+
+```{r}
+plot(G_mk.csr)
+```
+
+F Function
+
+```{r}
+F_mk = Fest(mk_jit)
+plot(F_mk)
+```
+
+```{r}
+F_mk.csr <- envelope(mk_jit, Fest, nsim = 100)
+```
+
+```{r}
+plot(F_mk.csr)
+```
+
+## Mandalay & Sagaing
+
+OK now lets be boring and go look at Mandalay/Sagaing where the bulk of the conflict happens:
+
+```{r}
+mnd <- reg_sf %>% filter(ST %in% c("Mandalay", "Sagaing"))
+plot(st_geometry(mnd), main = "Mandalay & Sagaing")
+```
+
+```{r}
+par(mfrow=c(2,2))
+par(mar = c(3,2,2,1))
+plot(mnd, main = "Mandalay & Sagaing")
+```
+
+```{r}
+mnd_owin <- as.owin(mnd)
+mnd_owin
+```
+
+```{r}
+class(mnd_owin)
+```
+
+```{r}
+mnd_quarter <- acled_quarter %>%
+  filter(admin1 %in% c("Mandalay", "Sagaing"))
+```
+
+```{r}
+tm_shape(mnd)+
+  tm_polygons()+
+  tm_shape(mnd_quarter)+
+  tm_dots(size = 0.1)+
+  tm_facets(by ="QuarterNumeric", free.coords = FALSE, drop.units =TRUE)
+```
+
+Wowee so much fighting!
+
+```{r}
+mnd_q <- mnd_quarter %>%
+  select(QuarterNumeric)
+```
+
+```{r}
+mnd_q_ppp <- as.ppp(mnd_q)
+mnd_q_ppp
+```
+
+check ppp object
+
+```{r}
+summary(mnd_q_ppp)
+```
+
+```{r}
+any(duplicated(mnd_q_ppp))
+```
+
+```{r}
+mnd_jit <- rjitter(mnd_q_ppp, retry=TRUE, nsim=1, drop=TRUE)
+```
+
+```{r}
+any(duplicated(mnd_jit))
+```
+
+```{r}
+mnd_q_owin <- mnd_jit[mnd_owin]
+summary(mnd_q_owin)
+```
+
+```{r}
+stkde_mnd <- spattemp.density(mnd_q_owin)
+summary(stkde_mnd)
+```
+
+```{r}
+qs <- c(1,2)
+par(mfcol= c(1,2))
+for( i in qs){
+  plot(stkde_mnd, i,
+       override.par = FALSE,
+       fix.range = TRUE,
+       main =  paste("STKDE at Q", i))
+}
+```
+
+```{r}
+qs <- c(3,4)
+par(mfcol= c(1,2))
+for( i in qs){
+  plot(stkde_mnd, i,
+       override.par = FALSE,
+       fix.range = TRUE,
+       main =  paste("STKDE at Q", i))
+}
+```
+
+```{r}
+qs <- c(5,6)
+par(mfcol= c(1,2))
+for( i in qs){
+  plot(stkde_mnd, i,
+       override.par = FALSE,
+       fix.range = TRUE,
+       main =  paste("STKDE at Q", i))
+}
+```
+
+```{r}
+qs <- c(7,8)
+par(mfcol= c(1,2))
+for( i in qs){
+  plot(stkde_mnd, i,
+       override.par = FALSE,
+       fix.range = TRUE,
+       main =  paste("STKDE at Q", i))
+}
+```
+
+```{r}
+qs <- c(9,10)
+par(mfcol= c(1,2))
+for( i in qs){
+  plot(stkde_mnd, i,
+       override.par = FALSE,
+       fix.range = TRUE,
+       main =  paste("STKDE at Q", i))
+}
+```
+
+```{r}
+qs <- c(11,12)
+par(mfcol= c(1,2))
+for( i in qs){
+  plot(stkde_mnd, i,
+       override.par = FALSE,
+       fix.range = TRUE,
+       main =  paste("STKDE at Q", i))
+}
+```
+
+```{r}
+qs <- c(13,14)
+par(mfcol= c(1,2))
+for( i in qs){
+  plot(stkde_mnd, i,
+       override.par = FALSE,
+       fix.range = TRUE,
+       main =  paste("STKDE at Q", i))
+}
+```
+
+G Function
+
+```{r}
+G_ms = Gest(mnd_jit, correction = "border")
+plot(G_ms, xlim =c(0,500))
+```
+
+```{r}
+G_ms.csr <- envelope(mnd_jit, Gest, nsim = 100)
+```
+
+```{r}
+plot(G_ms.csr)
+```
+
+F Function
+
+```{r}
+F_ms = Fest(mnd_jit)
+plot(F_ms)
+```
+
+```{r}
+F_ms.csr <- envelope(mnd_jit, Fest, nsim = 100)
+```
+
+```{r}
+plot(F_ms.csr)
+```
+
+## Words of wisdom
+
+After researching into the reasons behind the conflicts in Myanmar, a few key actors have become apparent to me:
+
+1.  The Tatmadaw (Myanman Military), who started the coup in Febuary 2021,
+
+2.  The Three Brotherhood Alliance(TBA), consisting of the [Arakan Army](https://en.wikipedia.org/wiki/Arakan_Army "Arakan Army")(AA), [Myanmar National Democratic Alliance Army](https://en.wikipedia.org/wiki/Myanmar_National_Democratic_Alliance_Army "Myanmar National Democratic Alliance Army")(MDNAA), and the [Ta'ang National Liberation Army](https://en.wikipedia.org/wiki/Ta%27ang_National_Liberation_Army "Ta'ang National Liberation Army")(TNLA) formed in June 2019,
+
+3.  The Karen National Union(KNU), and by extent its armed force the Karen National Liberation Army(KNLA), a group that represents the Karen minority in Myanmar, who have been [in conflict](https://en.wikipedia.org/wiki/Karen_conflict) with the Myanmar government since 1949.
+
+The bulk of the fighting in the central regions of Myanmar can be attributed to clashes between the Three Brotherhood Alliance and the Tatmadaw, after the TBA voiced opposition to the Tatmadaw on March 29, 2021. Specifically in Rakhine, the AA used the first peace in years to gain control over most of Rakhine state, declaring in August that they controlled over two-thirds of the state.
+
+The big spike in action in late 2023 is caused by [Operation 1027](https://en.wikipedia.org/wiki/Operation_1027), a massive offensive in northern Shan state on October 27, 2023.
+
+Down south in Kayin, tensions between the KNU and the Tatmadaw increased following the coup, leading to hostilities and conflict.
