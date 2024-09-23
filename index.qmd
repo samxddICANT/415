@@ -13,7 +13,8 @@ listing:
 hi hi hello i learn geospatial analytics and applications here 
 
 now watch this drive
-![](watch-this.gif){width = 500}
+
+![](watch-this.gif)
 
 **Hands On Exercises**
 

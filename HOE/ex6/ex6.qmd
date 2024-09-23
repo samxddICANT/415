@@ -601,6 +601,7 @@ wm_d62
 wm62_lw <- nb2listw(wm_d62, style = 'B')
 summary(wm62_lw)
 ```
+
 ```{r}
 fips <- order(hunan_join$County)
 gi.fixed <- localG(hunan_join$GDPPC, wm62_lw)
