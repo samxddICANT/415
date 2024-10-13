@@ -13,11 +13,11 @@ format:
 
 # Introduction : Drug Abuse in Thailand
 
-Sawadeeka ladyboys, today we learn:
+This assignment aims to learn:
 
 -   if the key indicators of drug abuse in Thailand are **spatially dependent**
 
--   If so, detect the **clusters, outliers, and hotspots**
+-   if so, detect the **clusters, outliers, and hotspots**
 
 ```{r}
 pacman:: p_load(sf, tmap, tidyverse, sfdep,spdep)
@@ -110,7 +110,6 @@ so ill be looking \@ drug use cases alongside import and trafficking cases
 
 ```{r}
 #| eval: false
-
 tmap_mode("plot")
 
 plot_list <- list()
@@ -136,7 +135,10 @@ for (year in names(drugoff_list)) {
 
 # Arrange the plots in a 2x3 layout
 tmap_arrange(plotlist = plot_list, ncol = 2, nrow = 3)
+
 ```
+
+![](data/rds/drug_use_eqc.png)
 
 The drug use is pretty bad from 17-19, but started declining in 2020(covid? maybe). Analysis will thus be conducted on the worst year, 2018.
 
@@ -357,6 +359,8 @@ tm_shape(HCSA_sig_DUC18) +
   tm_borders(alpha = 0.4)
 ```
 
+The hotspot areas coincide with the high-high cluster identified earlier.
+
 ok now that weve seen the drug use cases in 2018, lets see how they get the drugs there
 
 # DRUG TRAFFICKING 2018
@@ -499,6 +503,8 @@ tm_shape(lisa_sig_traff18) +
   tm_borders(alpha = 0.4)
 ```
 
+Looking at the areas highlighted, there are significant high-high spots in the northeast and northwest, consistent with our hypothesis that trafficking routes are coming from the Burmese and Cambodian border
+
 ```{r}
 wm_idw_traff18 <- wm_q_traff18 %>%
   mutate(wts = st_inverse_distance(nb, geometry,
@@ -557,6 +563,8 @@ map2 <- tm_shape(HCSA_traff18) +
 
 tmap_arrange(map1, map2, ncol = 2)
 ```
+
+Drug trafficking cases increase in intensity closer to the central areas of Thailand
 
 ```{r}
 HCSA_sig_traff18 <- HCSA_traff18  %>%
