@@ -24,6 +24,11 @@ website:
             href: "HOE/ex6/ex6.html"
           - text: "ex7"
             href: "HOE/ex7/ex7.html"
+          - text: "ex8"
+            href: "HOE/ex8/ex8.html"
+          - text: "ex9"
+            href: "HOE/ex9/ex9.html"
+          
       - text: "ICEs"
         menu:
           - text: "ice1"
@@ -38,6 +43,12 @@ website:
             href: "ICE/ex5/ice5.html"
           - text: "ice6"
             href: "ICE/ex6/ice6.html"
+          - text: "ice7"
+            href: "ICE/ex7/ice7.html"
+          - text: "ice8"
+            href: "ICE/ex8/ice8.html"
+          - text: "ice9"
+            href: "ICE/ex9/ice9.html"
       - text: "Takehomes"
         menu:
           - text: "takehome1"
