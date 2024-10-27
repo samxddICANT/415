@@ -1,5 +1,5 @@
 ---
-title: "Exercise 1"
+title: "Ex 1"
 date: "August 18, 2024"
 date-modified: "last-modified"
 execute: 
