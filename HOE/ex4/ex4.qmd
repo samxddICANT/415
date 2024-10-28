@@ -1,5 +1,5 @@
 ---
-title: "Ex4"
+title: "Ex 4"
 date: "September 3, 2024"
 date-modified: "last-modified"
 execute: 
@@ -79,7 +79,7 @@ Next, lines_center() is used to generate a SpatialPointsDataFrame with line cent
 ```
 
 Use the code below to compute NKDE:
+
 ```{r}
 
 ```
-
