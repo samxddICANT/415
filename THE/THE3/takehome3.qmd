@@ -1,0 +1,254 @@
+---
+title: "ICE8"
+date: "OCtober 28, 2024"
+date-modified: "last-modified"
+execute: 
+  eval: true
+  echo: true
+  freeze: true
+---
+
+
+## Install/Launch R Packages
+
+This exercise uses the R packages *tmap*, *sf*, *tidyverse*, *raster*, and *spatstat*.
+
+```{r}
+install.packages("maptools", repos = "https://packagemanager.posit.co/cran/2023-10-13")
+```
+
+```{r}
+pacman::p_load(tmap, sf, tidyverse, raster, spatstat, maptools, sp)
+```
+
+### Loading pre-prepared data
+
+thank u immanuel <3
+```{r}
+admin1_study <- read_rds("data/rds/papua_adm1.rds")
+```
+
+```{r}
+admin2_study <- read_rds("data/rds/papua_adm2.rds")
+```
+
+```{r}
+points_study <- read_rds("data/rds/points_study.rds")
+```
+
+
+```{r}
+tmap_mode("plot")
+tm_shape(admin1_study) + tm_polygons() + tm_shape(points_study) + tm_dots(size = 0.05)
+```
+## 1st order SPPA
+
+convert to ppp
+```{r}
+points_ppp <- as.ppp(st_coordinates(points_study),
+                     st_bbox(points_study))
+```
+remove duplicates
+
+Notice that a warning about duplicates occurs. In spatial point patterns analysis, a significant issue is the presence of duplicates. The statistical methodology used for spatial points patterns processes is based largely on the assumption that processes are simple, that the points cannot be coincident. balls test
+
+The code below can check the duplication in ppp:
+
+```{r}
+any(duplicated(points_ppp))
+```
+
+To count the number of coincidence points, the multiplicity() function can be used:
+
+```{r}
+multiplicity(points_ppp)
+```
+
+To know the number of locations that have more than one point event, run the code below:
+
+```{r}
+sum(multiplicity(points_ppp) > 1)
+```
+
+
+To tackle this problem, use *jittering* to slightly shift the duplicate points such that they no longer occur at the same point, to make them unique.
+
+```{r}
+points_ppp <- rjitter(points_ppp, retry = TRUE, nsimm = 1, drop = TRUE)
+any(duplicated(points_ppp))
+```
+When analysing spatial point patterns, owin can be used to define a geographic boundary to confine our analysis:
+
+```{r}
+adm1_sp <- as(admin1_study, "Spatial")
+adm1_owin <- as.owin(adm1_sp)
+plot(adm1_owin)
+```
+```{r}
+summary(adm1_owin)
+```
+
+The code below combines both the point and polygon features in one ppp object:
+
+```{r}
+points_ppp = points_ppp[adm1_owin]
+summary(points_ppp)
+```
+
+```{r}
+plot(points_ppp)
+```
+
+
+```{r}
+#| eval: false
+kde_points_bw <- density(points_ppp, sigma = bw.ppl, edge = TRUE, kernel = "gaussian")
+plot(kde_points_bw)
+```
+![](data/imgs/kde_bwppl.png)
+```{r}
+bw <- bw.ppl(points_ppp)
+bw
+```
+rescale kde layers to convert to km
+```{r}
+points_ppp_km <- rescale(points_ppp, 1000, "km")
+```
+
+```{r}
+#| eval: false
+kde_points_bw <- density(points_ppp_km, sigma = bw.ppl, edge = TRUE, kernel = "gaussian")
+```
+
+```{r}
+#| echo: false
+#| eval: false
+write_rds(kde_points_bw, "data/rds/kde_points_bw.rds")
+```
+```{r}
+#| echo: false
+kde_points_bw <- read_rds("data/rds/kde_points_bw.rds")
+```
+
+```{r}
+#| eval: false
+plot(kde_points_bw)
+```
+![](data/imgs/kde_bwppl_km.png)
+
+The resultant plot is much more legible.
+
+repeating to show other bw methods:
+```{r}
+kde_points_bw_cvl <- density(points_ppp_km, sigma = bw.CvL, edge = TRUE, kernel = "gaussian")
+```
+```{r}
+kde_points_bw_scott <- density(points_ppp_km, sigma = bw.scott, edge = TRUE, kernel = "gaussian")
+```
+
+```{r}
+#| eval: false
+kde_points_bw_diggle <- density(points_ppp_km, sigma = bw.diggle, edge = TRUE, kernel = "gaussian")
+```
+
+```{r}
+#| echo: false
+#| eval: false
+write_rds(kde_points_bw_diggle, "data/rds/kde_points_bw_diggle.rds")
+```
+```{r}
+#| echo: false
+kde_points_bw_diggle <- read_rds("data/rds/kde_points_bw_diggle.rds")
+```
+
+
+```{r}
+par(mfrow=c(2,2))
+par(mar = c(3,2,2,1))
+plot(kde_points_bw_diggle, main = "bw.diggle")
+plot(kde_points_bw_cvl, main = "bw.CvL")
+plot(kde_points_bw_scott, main = "bw.scott")
+plot(kde_points_bw, main = "bw.ppl")
+```
+
+fixed bandwidth
+```{r}
+kde_points_bw_500 <- density(points_ppp_km, sigma = 0.5, edge = TRUE, kernel = "gaussian")
+plot(kde_points_bw_500)
+```
+
+adaptive bandwidth
+```{r}
+#| eval: false 
+kde_points_adapt <- adaptive.density(points_ppp_km, method = "kernel")
+
+```
+
+comparing bandwidths
+
+
+The conversion of a KDE output into a grid object can be done to make it compatible with mapping applications.
+
+```{r}
+gridded_kde_points_bw <- as.SpatialGridDataFrame.im(kde_points_bw)
+spplot(gridded_kde_points_bw)
+```
+
+This gridded KDE object can be further converted into a raster layer.
+
+```{r}
+kde_points_bw_raster <- raster(gridded_kde_points_bw)
+kde_points_bw_raster
+```
+
+Set the CRS:
+
+```{r}
+projection(kde_points_bw_raster) <- CRS("+init=EPSG:23883")
+kde_points_bw_raster
+```
+
+Display the KDE raster layer:
+
+```{r}
+tm_shape(kde_points_bw_raster) + 
+  tm_raster("v", palette="plasma") +
+  tm_layout(legend.position = c("left", "bottom"), frame = FALSE)
+```
+
+## Nearest Neighbor Analysis
+
+Perform the Clark-Evans test of aggregation using the following hypotheses:
+
+-   H0: Random distribution of armed conflict events
+
+-   H1: Non-Random distribution of armed conflict events
+```{r}
+clarkevans.test(points_ppp, correction = "none", clipregion = "adm1_owin", alternative = c("clustered"), nsim = 99)
+```
+
+The R value from the above result indicates clustering, and as p \< 0.05, H0 can be rejected.
+
+
+## 2nd Order SPPA
+G func
+```{r}
+G <- Gest(points_ppp_km, correction = "border")
+plot(G, xlim = c(0,25))
+```
+```{r}
+F_fn <- Fest(points_ppp_km)
+plot(F_fn)
+```
+
+```{r}
+#| eval: false
+F.csr <- envelope(points_ppp_km, Fest, nsim = 99)
+```
+
+```{r}
+#| eval: false
+plot(F.csr)
+```
+![](data/imgs/F_csr.png)
+

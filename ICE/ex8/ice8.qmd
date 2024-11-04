@@ -88,7 +88,11 @@ metric$Name <- gsub(".*\\\\([a-zA-Z0-9_]+)\\\\, \\\\model\\\\.*", "\\1", metric$
 ```{r}
 plot(metric)
 ```
+```{r}
 
+ggcoefstats(condo_both_mlr$model,
+            sort = "ascending")
+```
 
 ```{r}
 check_collinearity(condo_both_mlr$model)
@@ -126,17 +130,42 @@ plot(check_outliers(condo_both_mlr$model, method = "cook"))
 mlr_output <- as.data.frame(condo_fw_mlr$model$residuals) %>% rename('FW_MLR_RES' = 'condo_fw_mlr$model$residuals')
 ```
 
-
 ```{r}
-
+condo_resale_sf <- cbind(condo_resale_sf, 
+                        mlr_output$FW_MLR_RES) %>%
+  rename(`MLR_RES` = `mlr_output.FW_MLR_RES`)
 ```
-```{r}
 
+
+```{r}
+#| fig-width: 12
+#| fig-height: 7
+tmap_mode("view")
+tm_shape(mpsz)+
+  tmap_options(check.and.fix = TRUE) +
+  tm_polygons(alpha = 0.4) +
+tm_shape(condo_resale_sf) +  
+  tm_dots(col = "MLR_RES",
+          alpha = 0.6,
+          style="quantile") +
+   tm_view(set.zoom.limits = c(12,14))
+tmap_mode("plot")
 ```
-```{r}
 
+```{r}
+condo_resale_sf <- condo_resale_sf %>%
+  mutate(nb = st_knn(geometry, k=6,
+                     longlat = FALSE),
+         wt = st_weights(nb,
+                         style = "W"),
+         .before = 1)
 ```
-```{r}
 
+```{r}
+global_moran_perm(condo_resale_sf$MLR_RES, 
+                  condo_resale_sf$nb, 
+                  condo_resale_sf$wt, 
+                  alternative = "two.sided", 
+                  nsim = 99)
 ```
 

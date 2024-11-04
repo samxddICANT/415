@@ -54,9 +54,9 @@ website:
           - text: "takehome1"
             href: "THE/THE1/takehome1.html"
           - text: "takehome2"
-            href: "THE/THE1/takehome2.html"
+            href: "THE/THE2/takehome2.html"
           - text: "takehome3"
-            href: "THE/THE1/takehome3.html"
+            href: "THE/THE3/takehome3.html"
     right: 
       - href: index.qmd
         text: Home
